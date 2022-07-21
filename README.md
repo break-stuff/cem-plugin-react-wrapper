@@ -67,7 +67,7 @@ export default {
 
 ### Attribute Mapping
 
-React components operate as JavaScript functions and as such, there are a number of reserved words in React and JavaScript that could cause problems if they are used in projects. to prevent this from happening, the `attributeMapping` object allows you to create alternate names for attributes to prevent naming collisions. The attribute for your component will remain the same, but the React component will take advantage of these alternate names to prevent issues.
+React components operate as JavaScript functions and because of that, there are a number of reserved words in React and JavaScript that will cause problems if they are used in React components. To prevent this from happening, the `attributeMapping` object allows you to create alternate names for attributes to prevent naming collisions. The attribute for your component will remain the same, but the React component will take advantage of these alternate names to prevent issues.
 
 ```js
 {
@@ -78,21 +78,27 @@ React components operate as JavaScript functions and as such, there are a number
 }
 ```
 
+```jsx
+<MyElement _for={'Some Value'} />
+```
+
 ### Exclude
 
-Many component libraries contain internal components used to help construct other components. These may not necessarily need their own wrapper. If that's the case, they can be excluded from the lust using the `exclude` property. Pass an array fo the class names you would like to exclude and they will be skipped.
+Many component libraries contain internal components used to help construct other components. These may not necessarily need their own wrapper. If that's the case, they can be excluded from the process using the `exclude` property. Pass an array fo the class names you would like to exclude and they will be skipped.
 
 ```js
 {
-  exclude: ['MyElement', 'MyOtherElement']
+  exclude: ['MyInternalElement', 'MyOtherInternalElement']
 }
 ```
 
 ### Module Path
 
-This setting is used to determine where to pull the pull the logic to create the the custom element. If nothing is defined, it will try to use the `module` property defined in the `package.json`, otherwise it will throw an error.
+This setting is used to determine where to pull the pull the logic for the custom element. If nothing is defined, it will try to use the `module` property defined in the `package.json`, otherwise it will throw an error.
 
-This configuration accepts a `function` with the component's class name and tag name as parameters. This should provide greater flexibility in identifying file locations as well as provide opportunities to optimize code where bundling or tree shaking may not be an option.
+This configuration accepts a `function` with the component's class name and tag name as parameters. This should provide greater flexibility in identifying file locations.
+
+***Note:*** _These paths are relative to the React wrapper output directory._
 
 ```js
 {
@@ -126,7 +132,7 @@ In addition to the wrappers a manifest file (`index.js`) to provide a single poi
 import { MyElement, MyOtherElement } from './react';
 ```
 
-If bundling and tree shaking are not available, components can be accessed directly from each component file.
+Components can also be accessed directly from each component file.
 
 ```js
 import { MyElement } from './react/MyElement.js';
@@ -148,7 +154,7 @@ All attributes and public property names (with the exception of those that were 
 Additionally, complex objects can also be passed as properties as well.
 
 ```jsx
-<MyTodoList items={['Wash car', 'Pay bills', 'Deploy code']}>
+<MyTodoList items={['Wash car', 'Pay bills', 'Deploy code']} />
 ```
 
 ## Slots
