@@ -6,8 +6,7 @@
   "module": "index.js",
   "type": "module",
   "files": [
-    "utils.d.ts",
-    "utils.js",
+    "dist",
     "index.d.ts",
     "index.js"
   ],
