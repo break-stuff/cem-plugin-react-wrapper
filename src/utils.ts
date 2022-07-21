@@ -3,6 +3,10 @@ import prettier from "prettier";
 import fs from "fs";
 
 export function getModulePath(outdir: string, packageJson: any) {
+  if(!packageJson.module) {
+    throw new Error('You must define a module path in order to generate React wrappers.');
+  }
+
   const directories = outdir.split("/");
   return path.join(directories.map((_) => "../").join(""), packageJson.module);
 }
