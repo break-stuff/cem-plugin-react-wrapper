@@ -15,7 +15,7 @@ npm i -D cem-plugin-react-wrapper
 ```js
 // custom-elements-manifest.config.js
 
-import { cemReactWrapper } from "cem-react-wrapper";
+import { cemReactWrapper } from "cem-plugin-react-wrapper";
 
 export default {
   plugins: [cemReactWrapper()],

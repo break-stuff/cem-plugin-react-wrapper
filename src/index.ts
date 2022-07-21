@@ -39,8 +39,8 @@ export default function ceReactWrapper({
       }
 
       const components: Declaration[] = [];
-      customElementsManifest.modules.forEach((mod) => {
-        mod.declarations.forEach((dec: Declaration) => {
+      customElementsManifest.modules?.forEach((mod) => {
+        mod?.declarations?.forEach((dec: Declaration) => {
           if (
             exclude &&
             !exclude.includes(dec.name) &&
@@ -103,12 +103,14 @@ function getFields(component: Declaration) {
 }
 
 function getEventNames(component: Declaration): EventName[] {
-  return component?.events?.map((event) => {
-    return {
-      name: event.name,
-      reactName: createEventName(event),
-    };
-  });
+  return (
+    component?.events?.map((event) => {
+      return {
+        name: event.name,
+        reactName: createEventName(event),
+      };
+    }) || []
+  );
 }
 
 function setAttributes(
@@ -119,6 +121,7 @@ function setAttributes(
     attributes: [],
     booleanAttributes: [],
   };
+
   component?.attributes
     ?.filter((attr) => attr.fieldName)
     ?.forEach((attr) => {
@@ -252,7 +255,6 @@ function getReactComponentTemplate(
     customPath instanceof Function
       ? customPath(component.name, component.tagName)
       : getModulePath(outdir, packageJson);
-  console.log('Module', customPath instanceof Function, modulePath)
   const params = getParams(booleanAttributes, attributes, events);
   const eventTemplates = getEventTemplates(events);
   const booleanAttrTemplates = getBooleanAttributeTemplates(booleanAttributes);
@@ -328,7 +330,9 @@ function getTypeDefinitionTemplate(
     declare global {
       namespace JSX {
         interface IntrinsicElements {
-            '${component.tagName}': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+            '${
+              component.tagName
+            }': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
         }
       }
     }
