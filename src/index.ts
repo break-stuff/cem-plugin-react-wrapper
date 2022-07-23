@@ -57,7 +57,12 @@ export default function reactWrapper({
           component,
           attributeMapping
         );
-        const componentModulePath = getModulePath(modulePath, component, outdir, packageJson);
+        const componentModulePath = getModulePath(
+          modulePath,
+          component,
+          outdir,
+          packageJson
+        );
         const result = getReactComponentTemplate(
           component,
           events,
@@ -299,7 +304,11 @@ function getReactComponentTemplate(
         { 
           ${useEffect ? '"ref": ref,' : ""} 
           ${[...booleanAttributes, ...attributes]
-            .map((attr) => `"${attr?.name}": ${attr?.fieldName}`)
+            .map((attr) =>
+              attr?.name === attr?.fieldName
+                ? attr?.name
+                : `"${attr?.name}": ${attr?.fieldName}`
+            )
             .join(", ")}
         },
         children
