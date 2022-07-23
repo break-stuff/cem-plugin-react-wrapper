@@ -22,13 +22,13 @@ import {
 const packageJsonPath = path.join(process.cwd(), "package.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath).toString());
 
-export default function ceReactWrapper({
+export default function reactWrapper({
   exclude = [],
   attributeMapping = {},
   outdir = "react",
   typescript = false,
-  modulePath = undefined,
-}: Config = {}) {
+  modulePath,
+}: Config) {
   return {
     name: "cem-plugin-react-wrapper",
     packageLinkPhase(params: any) {
@@ -57,13 +57,13 @@ export default function ceReactWrapper({
           component,
           attributeMapping
         );
+        const componentModulePath = getModulePath(modulePath, component, outdir, packageJson);
         const result = getReactComponentTemplate(
           component,
           events,
           booleanAttributes,
           attributes,
-          outdir,
-          modulePath
+          componentModulePath
         );
 
         saveFile(outdir, `${component.name}.js`, result);
@@ -248,13 +248,8 @@ function getReactComponentTemplate(
   events: EventName[],
   booleanAttributes: MappedAttribute[],
   attributes: MappedAttribute[],
-  outdir: string,
-  customPath?: Function
+  modulePath: string
 ) {
-  const modulePath =
-    customPath instanceof Function
-      ? customPath(component.name, component.tagName)
-      : getModulePath(outdir, packageJson);
   const params = getParams(booleanAttributes, attributes, events);
   const eventTemplates = getEventTemplates(events);
   const booleanAttrTemplates = getBooleanAttributeTemplates(booleanAttributes);
@@ -318,9 +313,8 @@ function getTypeDefinitionTemplate(
   events: EventName[],
   booleanAttributes: Attribute[],
   attributes: Attribute[],
-  outdir: string
+  modulePath: string
 ) {
-  const modulePath = getModulePath(outdir, packageJson);
   const params = getParams(booleanAttributes, attributes, events);
 
   return `

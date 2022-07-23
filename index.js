@@ -1,1 +1,1 @@
-export { default as cemReactWrapper } from './dist/index.js';
+export { default as reactWrapper } from './dist/index.js';

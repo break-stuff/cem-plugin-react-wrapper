@@ -1,10 +1,27 @@
 import path from "path";
 import prettier from "prettier";
 import fs from "fs";
+import { Declaration } from "./types";
 
-export function getModulePath(outdir: string, packageJson: any) {
-  if(!packageJson.module) {
-    throw new Error('You must define a module path in order to generate React wrappers.');
+export function getPackageJson(): any {
+  const packageJsonPath = path.join(process.cwd(), "package.json");
+  return JSON.parse(fs.readFileSync(packageJsonPath).toString());
+}
+
+export function getModulePath(
+  modulePath: ((className: string, tagName: string) => string) | undefined,
+  component: Declaration,
+  outdir: string,
+  packageJson: any
+) {
+  if (modulePath instanceof Function) {
+    return modulePath(component.name, component.tagName);
+  }
+
+  if (!packageJson.module) {
+    throw new Error(
+      "You must define a module path in order to generate React wrappers."
+    );
   }
 
   const directories = outdir.split("/");

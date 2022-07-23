@@ -5,11 +5,11 @@
  */
 
 export interface Config {
-  exclude?: string[];
-  attributeMapping?: { [key: string]: string };
-  outdir?: string;
+  exclude: string[];
+  attributeMapping: { [key: string]: string };
+  outdir: string;
   typescript?: boolean;
-  modulePath?: (className, tagName) => string;
+  modulePath?: (className: string, tagName: string) => string;
 }
 
 export interface MappedAttribute extends Attribute {
