@@ -302,7 +302,7 @@ function getReactComponentTemplate(
       return React.createElement(
         "${component.tagName}",
         { 
-          ${useEffect ? '"ref": ref,' : ""} 
+          ${useEffect ? 'ref,' : ""} 
           ${[...booleanAttributes, ...attributes]
             .map((attr) =>
               attr?.name === attr?.fieldName
@@ -364,8 +364,11 @@ function getPropsInterface(
 ) {
   return [
     "children?: any;",
-    ...[...(booleanAttributes || []), ...(attributes || [])].map(
-      (attr) => `${toCamelCase(attr.name)}?: ${attr.type.text};`
+    ...(booleanAttributes || []).map(
+      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || 'boolean'};`
+    ), 
+    ...(attributes || []).map(
+      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || 'string'};`
     ),
     ...events?.map(
       (event) => `${event.reactName}?: EventListenerOrEventListenerObject;`
