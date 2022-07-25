@@ -8,6 +8,7 @@ import {
   EventName,
   MappedAttribute,
   ComponentAttributes,
+  Member,
 } from "./types";
 
 import {
@@ -57,6 +58,7 @@ export default function reactWrapper({
           component,
           attributeMapping
         );
+        const properties = getFields(component);
         const componentModulePath = getModulePath(
           modulePath,
           component,
@@ -68,6 +70,7 @@ export default function reactWrapper({
           events,
           booleanAttributes,
           attributes,
+          properties,
           componentModulePath
         );
 
@@ -79,6 +82,7 @@ export default function reactWrapper({
             events,
             booleanAttributes,
             attributes,
+            properties,
             outdir
           );
 
@@ -150,12 +154,14 @@ function setAttributes(
 function getParams(
   booleanAttributes: Attribute[],
   attributes: Attribute[],
+  properties: Member[],
   eventNames: EventName[]
 ) {
   return [
     ...[...(booleanAttributes || []), ...(attributes || [])].map((attr) =>
       toCamelCase(attr.name)
     ),
+    ...properties.map(prop => prop.name),
     ...eventNames?.map((event) => event.reactName),
   ]?.join(", ");
 }
@@ -234,10 +240,8 @@ function getAttributeTemplates(attributes: MappedAttribute[]) {
   );
 }
 
-function getPropTemplates(component: Declaration) {
-  const fields = getFields(component);
-
-  return fields?.map(
+function getPropTemplates(properties: Member[]) {
+  return properties?.map(
     (member) => `
       useEffect(() => {
         if(${member.name} !== undefined && component?.${member.name} !== ${member.name}) {
@@ -253,13 +257,14 @@ function getReactComponentTemplate(
   events: EventName[],
   booleanAttributes: MappedAttribute[],
   attributes: MappedAttribute[],
+  properties: Member[],
   modulePath: string
 ) {
-  const params = getParams(booleanAttributes, attributes, events);
+  const params = getParams(booleanAttributes, attributes, properties, events);
   const eventTemplates = getEventTemplates(events);
   const booleanAttrTemplates = getBooleanAttributeTemplates(booleanAttributes);
   const attrTemplates = getAttributeTemplates(attributes);
-  const propTemplates = getPropTemplates(component);
+  const propTemplates = getPropTemplates(properties);
   const useEffect =
     has(eventTemplates) ||
     has(propTemplates) ||
@@ -322,9 +327,10 @@ function getTypeDefinitionTemplate(
   events: EventName[],
   booleanAttributes: Attribute[],
   attributes: Attribute[],
+  properties: Member[],
   modulePath: string
 ) {
-  const params = getParams(booleanAttributes, attributes, events);
+  const params = getParams(booleanAttributes, attributes, properties, events);
 
   return `
     import React from "react";
@@ -341,7 +347,7 @@ function getTypeDefinitionTemplate(
     }
 
     export interface ${component.name}Props { 
-      ${getPropsInterface(booleanAttributes, attributes, events)} 
+      ${getPropsInterface(booleanAttributes, attributes, properties, events)} 
     }
 
     declare module "react" {
@@ -360,6 +366,7 @@ function getTypeDefinitionTemplate(
 function getPropsInterface(
   booleanAttributes: Attribute[],
   attributes: Attribute[],
+  properties: Member[],
   events: EventName[]
 ) {
   return [
@@ -369,6 +376,9 @@ function getPropsInterface(
     ), 
     ...(attributes || []).map(
       (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || 'string'};`
+    ),
+    ...(properties || []).map(
+      (prop) => `${toCamelCase(prop.name)}?: ${prop?.type?.text || 'string'};`
     ),
     ...events?.map(
       (event) => `${event.reactName}?: EventListenerOrEventListenerObject;`
