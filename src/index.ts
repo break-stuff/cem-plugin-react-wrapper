@@ -83,7 +83,7 @@ export default function reactWrapper({
             booleanAttributes,
             attributes,
             properties,
-            outdir
+            componentModulePath
           );
 
           saveFile(outdir, `${component.name}.d.ts`, result);
