@@ -55,10 +55,10 @@ export default {
       /** Specify the path where the component module is defined */
       modulePath: (className, tagName) => `../dist/${tagName}/${className}.js`,
 
-      /** Output directory to write the React wrappers to */
+      /** Output directory to write the React wrappers to - default is "react" */
       outdir: `build`,
 
-      /** If true, types will be created for your wrappers */
+      /** If true, types will be created for your wrappers - default is "true" */
       typescript: true,
     }),
   ],
@@ -141,7 +141,7 @@ import { MyOtherElement } from './react/MyOtherElement.js';
 
 ### TypeScript
 
-Setting the `typescript` property to `true` will generate type definition files (`.d.ts`) files for each of the components.
+Setting the `typescript` property to `true` will generate type definition files (`.d.ts`) files for each of the components. The property is `true` by default.
 
 ## Attributes and Properties
 

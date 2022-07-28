@@ -27,7 +27,7 @@ export default function reactWrapper({
   exclude = [],
   attributeMapping = {},
   outdir = "react",
-  typescript = false,
+  typescript = true,
   modulePath,
 }: Config) {
   return {
