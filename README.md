@@ -15,10 +15,10 @@ npm i -D cem-plugin-react-wrapper
 ```js
 // custom-elements-manifest.config.js
 
-import { cemReactWrapper } from "cem-plugin-react-wrapper";
+import { reactWrapper } from "cem-plugin-react-wrapper";
 
 export default {
-  plugins: [cemReactWrapper()],
+  plugins: [reactWrapper()],
 };
 ```
 
@@ -43,7 +43,7 @@ import { reactWrapper } from "cem-react-wrapper";
 
 export default {
   plugins: [
-    cemReactWrapper({
+    reactWrapper({
       /** Provide an attribute mapping to avoid collisions with JS/React reserved keywords */
       attributeMapping: {
         for: "_for",
