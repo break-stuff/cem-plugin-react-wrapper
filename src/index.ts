@@ -58,6 +58,9 @@ export default function reactWrapper({
           component,
           attributeMapping
         );
+        console.log('BOOL', booleanAttributes);
+        console.log('ATTR', attributes);
+        
         const properties = getFields(component);
         const componentModulePath = getModulePath(
           modulePath,
@@ -132,7 +135,6 @@ function setAttributes(
   };
 
   component?.attributes
-    ?.filter((attr) => attr.fieldName)
     ?.forEach((attr) => {
       /** Handle reserved keyword attributes */
       if (RESERVED_WORDS.includes(attr?.name)) {
@@ -310,7 +312,7 @@ function getReactComponentTemplate(
           ${useEffect ? 'ref,' : ""} 
           ${[...booleanAttributes, ...attributes]
             .map((attr) =>
-              attr?.name === attr?.fieldName
+              !attr?.fieldName || attr?.name === attr?.fieldName
                 ? attr?.name
                 : `"${attr?.name}": ${attr?.fieldName}`
             )
