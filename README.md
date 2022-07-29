@@ -39,7 +39,7 @@ The configuration has the following optional parameters:
 ```js
 // custom-elements-manifest.config.js
 
-import { cemReactWrapper } from "cem-react-wrapper";
+import { reactWrapper } from "cem-react-wrapper";
 
 export default {
   plugins: [
