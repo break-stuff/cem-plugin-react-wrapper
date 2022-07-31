@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import {
   Attribute,
   CustomElementsManifest,
@@ -18,10 +17,10 @@ import {
   RESERVED_WORDS,
   getModulePath,
   saveFile,
+  getPackageJson,
 } from "./utils.js";
 
-const packageJsonPath = path.join(process.cwd(), "package.json");
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath).toString());
+const packageJson = getPackageJson();
 
 export default function reactWrapper({
   exclude = [],
@@ -33,73 +32,144 @@ export default function reactWrapper({
   return {
     name: "cem-plugin-react-wrapper",
     packageLinkPhase(params: any) {
-      const customElementsManifest: CustomElementsManifest =
-        params.customElementsManifest;
-      if (!fs.existsSync(outdir)) {
-        fs.mkdirSync(outdir);
-      }
+      createOutdir(outdir);
+      createWrappers(
+        params.customElementsManifest,
+        exclude,
+        attributeMapping,
+        outdir,
+        typescript,
+        modulePath
+      );
 
-      const components: Declaration[] = [];
-      customElementsManifest.modules?.forEach((mod) => {
-        mod?.declarations?.forEach((dec: Declaration) => {
-          if (
-            exclude &&
-            !exclude.includes(dec.name) &&
-            (dec.customElement || dec.tagName)
-          ) {
-            components.push(dec);
-          }
-        });
-      });
-
-      components.forEach((component) => {
-        const events = getEventNames(component);
-        const { booleanAttributes, attributes } = setAttributes(
-          component,
-          attributeMapping
-        );
-        console.log('BOOL', booleanAttributes);
-        console.log('ATTR', attributes);
-        
-        const properties = getFields(component);
-        const componentModulePath = getModulePath(
-          modulePath,
-          component,
-          outdir,
-          packageJson
-        );
-        const result = getReactComponentTemplate(
-          component,
-          events,
-          booleanAttributes,
-          attributes,
-          properties,
-          componentModulePath
-        );
-
-        saveFile(outdir, `${component.name}.js`, result);
-
-        if (typescript) {
-          const result = getTypeDefinitionTemplate(
-            component,
-            events,
-            booleanAttributes,
-            attributes,
-            properties,
-            componentModulePath
-          );
-
-          saveFile(outdir, `${component.name}.d.ts`, result);
-        }
-      });
-
-      saveFile(outdir, "index.js", getManifestContentTemplate(components));
-
-      if (typescript) {
-        saveFile(outdir, "index.d.ts", getManifestContentTemplate(components));
-      }
     },
   };
+}
+
+export function createOutdir(outdir: string) {
+  if (!fs.existsSync(outdir)) {
+    fs.mkdirSync(outdir);
+  }
+}
+
+export function createWrappers(
+  customElementsManifest: CustomElementsManifest,
+  exclude: string[],
+  attributeMapping: { [key: string]: string },
+  outdir: string,
+  typescript: boolean,
+  modulePath?: (className: string, tagName: string) => string
+) {
+  const components = getComponents(customElementsManifest, exclude);
+
+  components.forEach((component) => {
+    const events = getEventNames(component);
+    const { booleanAttributes, attributes } = getAttributes(
+      component,
+      attributeMapping
+    );
+    const properties = getFields(component);
+    const componentModulePath = getModulePath(
+      modulePath,
+      component,
+      outdir,
+      packageJson
+    );
+
+    generateReactWrapper(
+      component,
+      events,
+      booleanAttributes,
+      attributes,
+      properties,
+      componentModulePath,
+      outdir
+    );
+
+    if (typescript) {
+      generateTypeDefinition(
+        component,
+        events,
+        booleanAttributes,
+        attributes,
+        properties,
+        componentModulePath,
+        outdir
+      );
+    }
+  });
+
+  generateManifests(components, outdir, typescript);
+}
+
+function getComponents(
+  customElementsManifest: CustomElementsManifest,
+  exclude: string[]
+) {
+  return customElementsManifest.modules
+    ?.map((mod) =>
+      mod?.declarations?.filter(
+        (dec: Declaration) =>
+          exclude &&
+          !exclude.includes(dec.name) &&
+          (dec.customElement || dec.tagName)
+      )
+    )
+    .flat();
+}
+
+function generateReactWrapper(
+  component: Declaration,
+  events: EventName[],
+  booleanAttributes: Attribute[],
+  attributes: Attribute[],
+  properties: Member[],
+  componentModulePath: string,
+  outdir: string
+) {
+  const result = getReactComponentTemplate(
+    component,
+    events,
+    booleanAttributes,
+    attributes,
+    properties,
+    componentModulePath
+  );
+
+  saveFile(outdir, `${component.name}.js`, result);
+}
+
+function generateTypeDefinition(
+  component: Declaration,
+  events: EventName[],
+  booleanAttributes: Attribute[],
+  attributes: Attribute[],
+  properties: Member[],
+  componentModulePath: string,
+  outdir: string
+) {
+  const result = getTypeDefinitionTemplate(
+    component,
+    events,
+    booleanAttributes,
+    attributes,
+    properties,
+    componentModulePath
+  );
+
+  saveFile(outdir, `${component.name}.d.ts`, result);
+}
+
+function generateManifests(
+  components: Declaration[],
+  outdir: string,
+  typescript: boolean
+) {
+  saveFile(outdir, "index.js", getManifestContentTemplate(components));
+
+  if (typescript) {
+    saveFile(outdir, "index.d.ts", getManifestContentTemplate(components));
+  }
 }
 
 function getFields(component: Declaration) {
@@ -125,7 +195,7 @@ function getEventNames(component: Declaration): EventName[] {
   );
 }
 
-function setAttributes(
+function getAttributes(
   component: Declaration,
   attributeMapping: { [key: string]: string }
 ): ComponentAttributes {
@@ -134,21 +204,20 @@ function setAttributes(
     booleanAttributes: [],
   };
 
-  component?.attributes
-    ?.forEach((attr) => {
-      /** Handle reserved keyword attributes */
-      if (RESERVED_WORDS.includes(attr?.name)) {
-        /** If we have a user-specified mapping, rename */
-        if (attr.name in attributeMapping) {
-          const attribute = getMappedAttribute(attr, attributeMapping);
-          addAttribute(attribute, result);
-          return;
-        }
-        throwKeywordException(attr, component);
+  component?.attributes?.forEach((attr) => {
+    /** Handle reserved keyword attributes */
+    if (RESERVED_WORDS.includes(attr?.name)) {
+      /** If we have a user-specified mapping, rename */
+      if (attr.name in attributeMapping) {
+        const attribute = getMappedAttribute(attr, attributeMapping);
+        addAttribute(attribute, result);
+        return;
       }
+      throwKeywordException(attr, component);
+    }
 
-      addAttribute(attr as MappedAttribute, result);
-    });
+    addAttribute(attr as MappedAttribute, result);
+  });
 
   return result;
 }
@@ -163,7 +232,7 @@ function getParams(
     ...[...(booleanAttributes || []), ...(attributes || [])].map((attr) =>
       toCamelCase(attr.name)
     ),
-    ...properties.map(prop => prop.name),
+    ...properties.map((prop) => prop.name),
     ...eventNames?.map((event) => event.reactName),
   ]?.join(", ");
 }
@@ -309,7 +378,7 @@ function getReactComponentTemplate(
       return React.createElement(
         "${component.tagName}",
         { 
-          ${useEffect ? 'ref,' : ""} 
+          ${useEffect ? "ref," : ""} 
           ${[...booleanAttributes, ...attributes]
             .map((attr) =>
               !attr?.fieldName || attr?.name === attr?.fieldName
@@ -374,13 +443,13 @@ function getPropsInterface(
   return [
     "children?: any;",
     ...(booleanAttributes || []).map(
-      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || 'boolean'};`
-    ), 
+      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || "boolean"};`
+    ),
     ...(attributes || []).map(
-      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || 'string'};`
+      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || "string"};`
     ),
     ...(properties || []).map(
-      (prop) => `${toCamelCase(prop.name)}?: ${prop?.type?.text || 'string'};`
+      (prop) => `${toCamelCase(prop.name)}?: ${prop?.type?.text || "string"};`
     ),
     ...events?.map(
       (event) => `${event.reactName}?: EventListenerOrEventListenerObject;`
