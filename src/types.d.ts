@@ -5,9 +5,9 @@
  */
 
 export interface Config {
-  exclude: string[];
-  attributeMapping: { [key: string]: string };
-  outdir: string;
+  exclude?: string[];
+  attributeMapping?: { [key: string]: string };
+  outdir?: string;
   typescript?: boolean;
   modulePath?: (className: string, tagName: string) => string;
 }
