@@ -232,8 +232,8 @@ function getParams(
     ...[...(booleanAttributes || []), ...(attributes || [])].map((attr) =>
       toCamelCase(attr.name)
     ),
-    ...properties.map((prop) => prop.name),
-    ...eventNames?.map((event) => event.reactName),
+    ...properties?.map((prop) => prop.name) || [],
+    ...eventNames?.map((event) => event.reactName) || [],
   ]?.join(", ");
 }
 
