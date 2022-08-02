@@ -33,8 +33,6 @@ export default function reactWrapper({
     name: "cem-plugin-react-wrapper",
     packageLinkPhase(params: any) {
       createOutdir(outdir);
-      console.log('EXCLUDE0', exclude);
-      
       createWrappers(
         params.customElementsManifest,
         exclude,
@@ -62,8 +60,6 @@ export function createWrappers(
   typescript: boolean,
   modulePath?: (className: string, tagName: string) => string
 ) {
-  console.log('EXCLUDE1', exclude);
-  
   const components = getComponents(customElementsManifest, exclude);
 
   components.forEach((component) => {
@@ -110,8 +106,6 @@ function getComponents(
   customElementsManifest: CustomElementsManifest,
   exclude: string[]
 ) {
-  console.log('EXCLUDE', exclude);
-  
   return customElementsManifest.modules
     ?.map((mod) =>
       mod?.declarations?.filter(
