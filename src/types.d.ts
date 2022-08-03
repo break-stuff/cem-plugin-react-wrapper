@@ -34,6 +34,10 @@ declare module '@custom-elements-manifest/analyzer/src/create.js';
  *
  */
 
+ export interface Params {
+  customElementsManifest: CustomElementsManifest;
+}
+
 export interface CustomElementsManifest {
   schemaVersion: string;
   readme: string;
@@ -41,27 +45,10 @@ export interface CustomElementsManifest {
 }
 
 interface Module {
-  kind: "javascript-module";
-  path: "src/calendar/calendar.ts";
+  kind: string;
+  path: string;
   declarations: Declaration[];
-  exports: [
-    {
-      kind: "js";
-      name: "DiaCalendar";
-      declaration: {
-        name: "DiaCalendar";
-        module: "src/calendar/calendar.ts";
-      };
-    },
-    {
-      kind: "custom-element-definition";
-      name: "dia-calendar";
-      declaration: {
-        name: "DiaCalendar";
-        module: "src/calendar/calendar.ts";
-      };
-    }
-  ];
+  exports: Export[];
 }
 
 export interface Declaration {
@@ -139,4 +126,13 @@ interface Attribute {
 interface SuperClass {
   name: string;
   package: string;
+}
+
+interface Export {
+  kind: string;
+  name: string;
+  declaration: {
+    name: string;
+    module: string;
+  };
 }
