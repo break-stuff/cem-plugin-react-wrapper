@@ -11,6 +11,7 @@
     "index.js"
   ],
   "scripts": {
+    "analyze": "tsc && cem analyze",
     "build": "tsc"
   },
   "author": "",
