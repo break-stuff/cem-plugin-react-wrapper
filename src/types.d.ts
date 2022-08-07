@@ -24,6 +24,7 @@ export interface ComponentAttributes {
 export interface EventName {
   name: string;
   reactName: string;
+  description: string;
 }
 
 declare module '@custom-elements-manifest/analyzer/src/create.js';

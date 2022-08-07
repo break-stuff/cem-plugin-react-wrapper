@@ -41,7 +41,6 @@ export default function reactWrapper({
         typescript,
         modulePath
       );
-
     },
   };
 }
@@ -190,6 +189,7 @@ function getEventNames(component: Declaration): EventName[] {
       return {
         name: event.name,
         reactName: createEventName(event),
+        description: event.description
       };
     }) || []
   );
@@ -232,8 +232,8 @@ function getParams(
     ...[...(booleanAttributes || []), ...(attributes || [])].map((attr) =>
       toCamelCase(attr.name)
     ),
-    ...properties?.map((prop) => prop.name) || [],
-    ...eventNames?.map((event) => event.reactName) || [],
+    ...(properties?.map((prop) => prop.name) || []),
+    ...(eventNames?.map((event) => event.reactName) || []),
   ]?.join(", ");
 }
 
@@ -278,37 +278,33 @@ function getEventTemplates(eventNames: EventName[]) {
 }
 
 function getBooleanAttributeTemplates(booleanAttributes: MappedAttribute[]) {
-  return booleanAttributes?.map(
-    (attr) => `
-      useEffect(() => {
-        if(${attr?.fieldName ?? attr.originalName} !== undefined) {
-          if(${attr?.fieldName ?? attr.originalName}) {
-            component?.setAttribute('${attr.fieldName}', '');
+  return booleanAttributes?.map((attr) => {
+    attr.fieldName = attr?.fieldName || toCamelCase(attr?.name);
+
+    return `useEffect(() => {
+        if(${attr?.fieldName} !== undefined) {
+          if(${attr?.fieldName}) {
+            component?.setAttribute('${attr.name}', '');
           } else {
-            component?.removeAttribute('${attr.fieldName}');
+            component?.removeAttribute('${attr.name}');
           }
         }
-      }, [${attr?.fieldName ?? attr.name}])
-    `
-  );
+      }, [${attr?.fieldName}])
+    `;
+  });
 }
 
 function getAttributeTemplates(attributes: MappedAttribute[]) {
-  return attributes?.map(
-    (attr) => `
-      useEffect(() => {
-        if(${
-          attr?.fieldName ?? attr.originalName
-        } !== undefined && component?.getAttribute('${
-      attr?.originalName ?? attr.fieldName
-    }') !== String(${attr?.fieldName ?? attr.originalName})) {
-                  component?.setAttribute('${
-                    attr?.originalName ?? attr.fieldName
-                  }', String(${attr?.fieldName ?? attr.originalName}))
+  return attributes?.map((attr) => {
+    attr.fieldName = attr?.fieldName || toCamelCase(attr?.name);
+
+    return `useEffect(() => {
+        if(${attr?.fieldName} !== undefined && component?.getAttribute('${attr?.name}') !== String(${attr?.fieldName})) {
+                  component?.setAttribute('${attr?.name}', String(${attr?.fieldName}))
         }
-      }, [${attr?.fieldName ?? attr.originalName}])
-  `
-  );
+      }, [${attr?.fieldName}])
+  `;
+  });
 }
 
 function getPropTemplates(properties: Member[]) {
@@ -380,11 +376,12 @@ function getReactComponentTemplate(
         { 
           ${useEffect ? "ref," : ""} 
           ${[...booleanAttributes, ...attributes]
-            .map((attr) =>
-              !attr?.fieldName || attr?.name === attr?.fieldName
+            .map((attr) => {
+              attr.fieldName = attr?.fieldName || toCamelCase(attr?.name);
+              return attr?.name === attr?.fieldName
                 ? attr?.name
-                : `"${attr?.name}": ${attr?.fieldName}`
-            )
+                : `"${attr?.name}": ${attr?.fieldName}`;
+            })
             .join(", ")}
         },
         children
@@ -428,6 +425,7 @@ function getTypeDefinitionTemplate(
       }
     }
 
+    /** ${component.summary || component.description} */
     export declare function ${component.name}({children${
     params ? "," : ""
   } ${params}}: ${component.name}Props): JSX.Element;
@@ -443,16 +441,28 @@ function getPropsInterface(
   return [
     "children?: any;",
     ...(booleanAttributes || []).map(
-      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || "boolean"};`
+      (attr) => `
+        /** ${attr.description} */
+        ${toCamelCase(attr.name)}?: ${attr?.type?.text || "boolean"};
+      `
     ),
     ...(attributes || []).map(
-      (attr) => `${toCamelCase(attr.name)}?: ${attr?.type?.text || "string"};`
+      (attr) => `
+        /** ${attr.description} */
+        ${toCamelCase(attr.name)}?: ${attr?.type?.text || "string"};
+      `
     ),
     ...(properties || []).map(
-      (prop) => `${toCamelCase(prop.name)}?: ${prop?.type?.text || "string"};`
+      (prop) => `
+        /** ${prop.description} */
+        ${toCamelCase(prop.name)}?: ${prop?.type?.text || "string"};
+      `
     ),
     ...events?.map(
-      (event) => `${event.reactName}?: EventListenerOrEventListenerObject;`
+      (event) => `
+        /** ${event.description} */
+        ${event.reactName}?: EventListenerOrEventListenerObject;
+      `
     ),
   ]?.join("");
 }
