@@ -14,5 +14,8 @@ export default {
   /** Output CEM path to `package.json`, defaults to true */
   packagejson: false,
   /** Provide custom plugins */
-  plugins: [reactWrapper({ outdir: "./demo/react-components" })],
+  plugins: [reactWrapper({ 
+    outdir: "./demo/wrapped-components",
+    modulePath: (className, tagName) => `../components/${tagName}.js`
+ })],
 };

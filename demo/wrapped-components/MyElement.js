@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import "../../../index.js";
+import "../components/my-element.js";
 
 export function MyElement({
   children,
@@ -36,36 +36,30 @@ export function MyElement({
   }, []);
 
   /** Boolean attributes - run whenever an attr has changed */
-
   useEffect(() => {
-    if (undefined !== undefined) {
-      if (undefined) {
-        component?.setAttribute("undefined", "");
+    if (disabled !== undefined) {
+      if (disabled) {
+        component?.setAttribute("disabled", "");
       } else {
-        component?.removeAttribute("undefined");
+        component?.removeAttribute("disabled");
       }
     }
   }, [disabled]);
 
   /** Attributes - run whenever an attr has changed */
-
+  useEffect(() => {
+    if (foo !== undefined && component?.getAttribute("foo") !== String(foo)) {
+      component?.setAttribute("foo", String(foo));
+    }
+  }, [foo]);
   useEffect(() => {
     if (
-      undefined !== undefined &&
-      component?.getAttribute("undefined") !== String(undefined)
+      fooAlt !== undefined &&
+      component?.getAttribute("foo-alt") !== String(fooAlt)
     ) {
-      component?.setAttribute("undefined", String(undefined));
+      component?.setAttribute("foo-alt", String(fooAlt));
     }
-  }, [undefined]);
-
-  useEffect(() => {
-    if (
-      undefined !== undefined &&
-      component?.getAttribute("undefined") !== String(undefined)
-    ) {
-      component?.setAttribute("undefined", String(undefined));
-    }
-  }, [undefined]);
+  }, [fooAlt]);
 
   /** Properties - run whenever a property has changed */
 

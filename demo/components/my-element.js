@@ -1,7 +1,7 @@
 /**
  * @attr {boolean} disabled - disables the element
  * @attribute {string} foo - description for foo
- * @attribute {1 | 2 | 3 | 4} foo-alt - description for foo
+ * @attribute {1|2|3|4} foo-alt - description for foo
  *
  * @csspart bar - Styles the color of bar
  *
@@ -18,10 +18,7 @@
  * @fires {Event} typed-event - some description for typed-event
  * @event {CustomEvent} typed-custom-event - some description for typed-custom-event
  *
- * @summary My custom component. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).\nUse it like this:\n```html\n<my-component type='text'></my-component>\n<my-component\n  type='color'\n  color='#00bb00'\n></my-component>\n```
- * 
- * @reference Google - https://google.com
- * @reference MDN - https://developer.mozilla.org/en-US/
+ * @summary My custom component. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
  *
  * @tag my-element
  * @tagname my-element
