@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import "../components/my-element.js";
+import "../components/radio-group.js";
 
-export function MyElement({
+export function RadioGroup({
   children,
   disabled,
-  foo,
-  fooAlt,
+  value,
+  size,
   prop1,
   prop2,
   onCustomEvent,
@@ -48,18 +48,21 @@ export function MyElement({
 
   /** Attributes - run whenever an attr has changed */
   useEffect(() => {
-    if (foo !== undefined && component?.getAttribute("foo") !== String(foo)) {
-      component?.setAttribute("foo", String(foo));
+    if (
+      value !== undefined &&
+      component?.getAttribute("value") !== String(value)
+    ) {
+      component?.setAttribute("value", String(value));
     }
-  }, [foo]);
+  }, [value]);
   useEffect(() => {
     if (
-      fooAlt !== undefined &&
-      component?.getAttribute("foo-alt") !== String(fooAlt)
+      size !== undefined &&
+      component?.getAttribute("size") !== String(size)
     ) {
-      component?.setAttribute("foo-alt", String(fooAlt));
+      component?.setAttribute("size", String(size));
     }
-  }, [fooAlt]);
+  }, [size]);
 
   /** Properties - run whenever a property has changed */
 
@@ -76,12 +79,12 @@ export function MyElement({
   }, [prop2]);
 
   return React.createElement(
-    "my-element",
+    "radio-group",
     {
       ref,
       disabled,
-      foo,
-      "foo-alt": fooAlt,
+      value,
+      size,
     },
     children
   );

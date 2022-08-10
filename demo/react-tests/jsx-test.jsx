@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { MyElement } from "../wrapped-components/";
 
 export default ({ title }) => {
   const [hidden, setDisplay] = useState(false);
@@ -12,7 +11,15 @@ export default ({ title }) => {
     <div>
       <h3 hidden={hidden}>{title}!</h3>
       <button onClick={toggleVisibility}>Toggle visibility</button>
-      <MyElement disabled
+
+      
+      <RadioGroup value="2" size={3}>
+        <span slot="label">My Label</span>
+        <Radio value="1">Option 1</Radio>
+        <Radio value="2">Option 2</Radio>
+        <Radio value="3">Option 3</Radio>
+      </RadioGroup>
+
     </div>
   );
 };

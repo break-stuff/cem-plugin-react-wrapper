@@ -4,12 +4,39 @@
   "modules": [
     {
       "kind": "javascript-module",
-      "path": "demo/components/my-element.js",
+      "path": "demo/components/radio-button.js",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "MyElement",
+          "name": "Radio",
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "summary": "My custom component. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).\\nUse it like this:\\n```html\\n<my-component type='text'></my-component>\\n<my-component\\n  type='color'\\n  color='#00bb00'\\n></my-component>\\n```",
+          "tagName": "radio-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "radio-button",
+          "declaration": {
+            "name": "Radio",
+            "module": "demo/components/radio-button.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "demo/components/radio-group.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "\nRadio Group - Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).\n\nUse it like this:\n```html\n<RadioGroup value=\"2\" size={3}>\n  <span slot=\"label\">My Label</span>\n  <Radio value=\"1\">Option 1</Radio>\n  <Radio value=\"2\">Option 2</Radio>\n  <Radio value=\"3\">Option 3</Radio>\n</RadioGroup>\n```",
+          "name": "RadioGroup",
           "cssProperties": [
             {
               "description": "Controls the color of foo",
@@ -29,12 +56,12 @@
           ],
           "slots": [
             {
-              "description": "This is a default/unnamed slot",
+              "description": "add radio buttons to the `default` slot to add options to your radio group",
               "name": ""
             },
             {
-              "description": "You can put some elements here",
-              "name": "container"
+              "description": "placeholder for the radio group label",
+              "name": "label"
             }
           ],
           "members": [
@@ -42,7 +69,7 @@
               "type": {
                 "text": "boolean"
               },
-              "description": "some description",
+              "description": "this toggles some unseen feature",
               "name": "prop1",
               "kind": "field"
             },
@@ -50,7 +77,7 @@
               "type": {
                 "text": "number"
               },
-              "description": "some description",
+              "description": "this will adjust thr width of the unit",
               "name": "prop2",
               "kind": "field"
             }
@@ -80,7 +107,7 @@
               "type": {
                 "text": "boolean"
               },
-              "description": "disables the element",
+              "description": "Disables the element",
               "name": "disabled",
               "fieldName": "disabled"
             },
@@ -88,34 +115,33 @@
               "type": {
                 "text": "string"
               },
-              "description": "description for foo",
-              "name": "foo",
-              "fieldName": "foo"
+              "description": "The value of the selected radio",
+              "name": "value",
+              "fieldName": "value"
             },
             {
               "type": {
                 "text": "1|2|3|4"
               },
-              "description": "description for foo",
-              "name": "foo-alt",
-              "fieldName": "fooAlt"
+              "description": "This will control the size of radio buttons",
+              "name": "size",
+              "fieldName": "size"
             }
           ],
           "superclass": {
             "name": "HTMLElement"
           },
-          "tagName": "my-element",
-          "summary": "My custom component. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).",
+          "tagName": "radio-group",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "custom-element-definition",
-          "name": "my-element",
+          "name": "radio-group",
           "declaration": {
-            "name": "MyElement",
-            "module": "demo/components/my-element.js"
+            "name": "RadioGroup",
+            "module": "demo/components/radio-group.js"
           }
         }
       ]
