@@ -21,6 +21,7 @@ import {
 } from "./utils.js";
 
 const packageJson = getPackageJson();
+let config: Config = {};
 
 export default function reactWrapper({
   exclude = [],
@@ -28,50 +29,45 @@ export default function reactWrapper({
   outdir = "react",
   typescript = true,
   modulePath,
+  descriptionSrc,
+  slotDocs = true,
 }: Config = {}) {
   return {
     name: "cem-plugin-react-wrapper",
     packageLinkPhase(params: any) {
-      createOutdir(outdir);
-      createWrappers(
-        params.customElementsManifest,
+      config = {
         exclude,
         attributeMapping,
         outdir,
         typescript,
-        modulePath
-      );
+        modulePath,
+        descriptionSrc,
+        slotDocs,
+      };
+
+      createOutdir(outdir);
+      createWrappers(params.customElementsManifest);
     },
   };
 }
 
-export function createOutdir(outdir: string) {
+function createOutdir(outdir: string) {
   if (!fs.existsSync(outdir)) {
     fs.mkdirSync(outdir);
   }
 }
 
-export function createWrappers(
-  customElementsManifest: CustomElementsManifest,
-  exclude: string[],
-  attributeMapping: { [key: string]: string },
-  outdir: string,
-  typescript: boolean,
-  modulePath?: (className: string, tagName: string) => string
-) {
-  const components = getComponents(customElementsManifest, exclude);
+function createWrappers(customElementsManifest: CustomElementsManifest) {
+  const components = getComponents(customElementsManifest);
 
   components.forEach((component) => {
     const events = getEventNames(component);
-    const { booleanAttributes, attributes } = getAttributes(
-      component,
-      attributeMapping
-    );
+    const { booleanAttributes, attributes } = getAttributes(component);
     const properties = getFields(component);
     const componentModulePath = getModulePath(
-      modulePath,
+      config.modulePath,
       component,
-      outdir,
+      config.outdir!,
       packageJson
     );
 
@@ -81,36 +77,31 @@ export function createWrappers(
       booleanAttributes,
       attributes,
       properties,
-      componentModulePath,
-      outdir
+      componentModulePath
     );
 
-    if (typescript) {
+    if (config.typescript) {
       generateTypeDefinition(
         component,
         events,
         booleanAttributes,
         attributes,
         properties,
-        componentModulePath,
-        outdir
+        componentModulePath
       );
     }
   });
 
-  generateManifests(components, outdir, typescript);
+  generateManifests(components, config.outdir!, config.typescript!);
 }
 
-function getComponents(
-  customElementsManifest: CustomElementsManifest,
-  exclude: string[]
-) {
+function getComponents(customElementsManifest: CustomElementsManifest) {
   return customElementsManifest.modules
     ?.map((mod) =>
       mod?.declarations?.filter(
         (dec: Declaration) =>
-          exclude &&
-          !exclude.includes(dec.name) &&
+          config.exclude &&
+          !config.exclude.includes(dec.name) &&
           (dec.customElement || dec.tagName)
       )
     )
@@ -123,8 +114,7 @@ function generateReactWrapper(
   booleanAttributes: Attribute[],
   attributes: Attribute[],
   properties: Member[],
-  componentModulePath: string,
-  outdir: string
+  componentModulePath: string
 ) {
   const result = getReactComponentTemplate(
     component,
@@ -135,7 +125,7 @@ function generateReactWrapper(
     componentModulePath
   );
 
-  saveFile(outdir, `${component.name}.js`, result);
+  saveFile(config.outdir!, `${component.name}.js`, result);
 }
 
 function generateTypeDefinition(
@@ -144,8 +134,7 @@ function generateTypeDefinition(
   booleanAttributes: Attribute[],
   attributes: Attribute[],
   properties: Member[],
-  componentModulePath: string,
-  outdir: string
+  componentModulePath: string
 ) {
   const result = getTypeDefinitionTemplate(
     component,
@@ -156,7 +145,7 @@ function generateTypeDefinition(
     componentModulePath
   );
 
-  saveFile(outdir, `${component.name}.d.ts`, result);
+  saveFile(config.outdir!, `${component.name}.d.ts`, result);
 }
 
 function generateManifests(
@@ -189,16 +178,13 @@ function getEventNames(component: Declaration): EventName[] {
       return {
         name: event.name,
         reactName: createEventName(event),
-        description: event.description
+        description: event.description,
       };
     }) || []
   );
 }
 
-function getAttributes(
-  component: Declaration,
-  attributeMapping: { [key: string]: string }
-): ComponentAttributes {
+function getAttributes(component: Declaration): ComponentAttributes {
   const result = {
     attributes: [],
     booleanAttributes: [],
@@ -208,8 +194,8 @@ function getAttributes(
     /** Handle reserved keyword attributes */
     if (RESERVED_WORDS.includes(attr?.name)) {
       /** If we have a user-specified mapping, rename */
-      if (attr.name in attributeMapping) {
-        const attribute = getMappedAttribute(attr, attributeMapping);
+      if (attr.name in config.attributeMapping!) {
+        const attribute = getMappedAttribute(attr);
         addAttribute(attribute, result);
         return;
       }
@@ -223,17 +209,17 @@ function getAttributes(
 }
 
 function getParams(
-  booleanAttributes: Attribute[],
-  attributes: Attribute[],
-  properties: Member[],
-  eventNames: EventName[]
+  booleanAttributes: Attribute[] = [],
+  attributes: Attribute[] = [],
+  properties: Member[] = [],
+  eventNames: EventName[] = []
 ) {
   return [
-    ...[...(booleanAttributes || []), ...(attributes || [])].map((attr) =>
+    ...[...booleanAttributes, ...attributes].map((attr) =>
       toCamelCase(attr.name)
     ),
-    ...(properties?.map((prop) => prop.name) || []),
-    ...(eventNames?.map((event) => event.reactName) || []),
+    ...properties?.map((prop) => prop.name),
+    ...eventNames?.map((event) => event.reactName),
   ]?.join(", ");
 }
 
@@ -254,14 +240,11 @@ function addAttribute(
   }
 }
 
-function getMappedAttribute(
-  attr: Attribute,
-  attributeMapping: { [key: string]: string }
-): MappedAttribute {
+function getMappedAttribute(attr: Attribute): MappedAttribute {
   return {
     ...attr,
     originalName: attr.name,
-    name: attributeMapping[attr.name],
+    name: config.attributeMapping![attr.name],
   };
 }
 
@@ -425,11 +408,46 @@ function getTypeDefinitionTemplate(
       }
     }
 
-    /** ${component.summary || component.description} */
+    /** 
+     * 
+      ${getDescription(component)} 
+      ${
+        has(component.slots) && config.slotDocs
+          ? `*
+  * **Slots** 
+ ${getSlotDocs(component)}`
+          : "*"
+      }
+      */
     export declare function ${component.name}({children${
     params ? "," : ""
   } ${params}}: ${component.name}Props): JSX.Element;
   `;
+}
+
+function getDescription(component: Declaration) {
+  const description = config.descriptionSrc
+    ? component[config.descriptionSrc]
+    : component.summary || component.description;
+
+  return (
+    description
+      ?.split("\n")
+      .map((y) => y.split("\\n").map((x) => ` * ${x}`))
+      .flat()
+      .join("\n") || "*"
+  );
+}
+
+function getSlotDocs(component: Declaration) {
+  return component.slots
+    ?.map(
+      (slot) =>
+        `  * - ${slot.name ? `**${slot.name}**` : "_default_"} - ${
+          slot.description
+        }`
+    )
+    .join("\n");
 }
 
 function getPropsInterface(

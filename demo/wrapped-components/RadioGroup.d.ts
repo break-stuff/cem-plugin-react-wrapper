@@ -48,6 +48,7 @@ declare module "react" {
 
 /**
  *
+ *
  * Radio Group - Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
  *
  * Use it like this:
@@ -61,7 +62,7 @@ declare module "react" {
  * ```
  *
  * **Slots**
- * - _default_ - add radio buttons to the `default` slot to add options to your radio group
+ * - _default_ - add radio buttons to the `default` slot to create options to your radio group
  * - **label** - placeholder for the radio group label
  */
 export declare function RadioGroup({

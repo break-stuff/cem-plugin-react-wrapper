@@ -24,6 +24,7 @@ declare module "react" {
 }
 
 /**
+ *
  * My custom component. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
  * Use it like this:
  * ```html

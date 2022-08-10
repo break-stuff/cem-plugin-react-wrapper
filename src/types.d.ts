@@ -10,6 +10,8 @@ export interface Config {
   outdir?: string;
   typescript?: boolean;
   modulePath?: (className: string, tagName: string) => string;
+  descriptionSrc?: 'description' | 'summary';
+  slotDocs?: boolean;
 }
 
 export interface MappedAttribute extends Attribute {

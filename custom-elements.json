@@ -56,7 +56,7 @@
           ],
           "slots": [
             {
-              "description": "add radio buttons to the `default` slot to add options to your radio group",
+              "description": "add radio buttons to the `default` slot to create options to your radio group",
               "name": ""
             },
             {
