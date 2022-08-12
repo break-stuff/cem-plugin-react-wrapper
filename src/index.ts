@@ -31,6 +31,7 @@ export default function reactWrapper({
   modulePath,
   descriptionSrc,
   slotDocs = true,
+  eventDocs = true,
 }: Config = {}) {
   return {
     name: "cem-plugin-react-wrapper",
@@ -43,6 +44,7 @@ export default function reactWrapper({
         modulePath,
         descriptionSrc,
         slotDocs,
+        eventDocs,
       };
 
       createOutdir(outdir);
@@ -418,6 +420,13 @@ function getTypeDefinitionTemplate(
  ${getSlotDocs(component)}`
           : "*"
       }
+      ${
+        has(component.events) && config.eventDocs
+          ? `*
+  * **Events** 
+ ${getEventDocs(events)}`
+          : "*"
+      }
       */
     export declare function ${component.name}({children${
     params ? "," : ""
@@ -445,6 +454,17 @@ function getSlotDocs(component: Declaration) {
       (slot) =>
         `  * - ${slot.name ? `**${slot.name}**` : "_default_"} - ${
           slot.description
+        }`
+    )
+    .join("\n");
+}
+
+function getEventDocs(events: EventName[]) {
+  return events
+    ?.map(
+      (event) =>
+        `  * - **${event.reactName}** - ${
+          event.description
         }`
     )
     .join("\n");

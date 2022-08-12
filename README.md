@@ -1,6 +1,16 @@
-# cem-plugin-react-wrapper
+# Web Component React Wrapper
 
-This is a plugin for the [Custom Element Manifest Analyzer](https://custom-elements-manifest.open-wc.org/) that automatically generates React wrappers for your custom elements based on on the data from the custom elements manifest (CEM).
+Make your web components React compatible with as little as one line of code!
+
+- No manually mapping
+- Automatically generates types for your components and props
+- Provides editor autocomplete features and documentation
+- Configurable
+- Very easy to set up and use
+
+---
+
+This tool leverages the [Custom Element Manifest Analyzer](https://custom-elements-manifest.open-wc.org/) that automatically generates React wrappers for your custom elements based on on the data from the custom elements manifest (CEM).
 
 ## Usage
 
@@ -33,6 +43,9 @@ The configuration has the following optional parameters:
   modulePath?: (className, tagName) => string;
   outdir?: string;
   typescript?: boolean;
+  descriptionSrc?: string;
+  slotDocs?: boolean;
+  eventDocs?: boolean;
 }
 ```
 
@@ -60,6 +73,15 @@ export default {
 
       /** If true, types will be created for your wrappers - default is "true" */
       typescript: true,
+
+      /** The property from the component object constructed by the CEM Analyzer */
+      descriptionSrc: 'description',
+
+      /** Displays the slot section of the element description */
+      slotDocs: true
+
+      /** Displays the events section of the element description */
+      eventDocs: true
     }),
   ],
 };
@@ -84,7 +106,7 @@ React components operate as JavaScript functions and because of that, there are 
 
 ### Exclude
 
-Many component libraries contain internal components used to help construct other components. These may not necessarily need their own wrapper. If that's the case, they can be excluded from the process using the `exclude` property. Pass an array fo the class names you would like to exclude and they will be skipped.
+Many component libraries contain internal components and base classes used to help construct other components. These may not necessarily need their own wrapper. If that's the case, they can be excluded from the process using the `exclude` property. Pass an array fo the class names you would like to exclude and they will be skipped.
 
 ```js
 {
@@ -170,6 +192,8 @@ Slotted items get passed to the component slot using the `children` property und
 </MySelect>
 ```
 
+Slot information will display with the element description during autocompletion or when hovered over. This section can be hidden by setting `slotDocs` to `false` in the config.
+
 ## Events
 
 Event names are converted to camel-case names prefixed with `on`. For example, an event named `my-change` will be converted to `onMyChange`.
@@ -177,3 +201,5 @@ Event names are converted to camel-case names prefixed with `on`. For example, a
 ```jsx
 <MySelect onMyChange={e => handleMyChange(e)} />
 ```
+
+Event information will display with the element description during autocompletion or when hovered over. This section can be hidden by setting `slotEvents` to `false` in the config.

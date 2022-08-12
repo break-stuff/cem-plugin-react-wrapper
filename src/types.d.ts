@@ -12,6 +12,7 @@ export interface Config {
   modulePath?: (className: string, tagName: string) => string;
   descriptionSrc?: 'description' | 'summary';
   slotDocs?: boolean;
+  eventDocs?: boolean;
 }
 
 export interface MappedAttribute extends Attribute {

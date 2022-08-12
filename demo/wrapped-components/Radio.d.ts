@@ -1,10 +1,10 @@
 import React from "react";
-import "../components/radio-button.js";
+import "../components/radio-group.js";
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "radio-button": React.DetailedHTMLProps<
+      "radio-group": React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       >;
@@ -14,6 +14,11 @@ declare global {
 
 export interface RadioProps {
   children?: any;
+  /** Disables the radio button */
+  disabled?: boolean;
+
+  /** The value assigned to the radio group */
+  value?: string;
 }
 
 declare module "react" {
@@ -25,15 +30,19 @@ declare module "react" {
 
 /**
  *
- * My custom component. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
+ * My custom component. Here is its [documentation](https://my-site.com/documentation).
+ *
  * Use it like this:
  * ```html
- * <my-component type='text'></my-component>
- * <my-component
- *   type='color'
- *   color='#00bb00'
- * ></my-component>
+ * <Radio value="1" disabled>Your label</Radio>
  * ```
  *
+ * **Slots**
+ * - _default_ - add text here to label your radio button
+ *
  */
-export declare function Radio({ children }: RadioProps): JSX.Element;
+export declare function Radio({
+  children,
+  disabled,
+  value,
+}: RadioProps): JSX.Element;

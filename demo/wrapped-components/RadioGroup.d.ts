@@ -64,6 +64,11 @@ declare module "react" {
  * **Slots**
  * - _default_ - add radio buttons to the `default` slot to create options to your radio group
  * - **label** - placeholder for the radio group label
+ *
+ * **Events**
+ * - **onCustomEvent** - some description for custom-event
+ * - **onTypedEvent** - some description for typed-event
+ * - **onTypedCustomEvent** - some description for typed-custom-event
  */
 export declare function RadioGroup({
   children,

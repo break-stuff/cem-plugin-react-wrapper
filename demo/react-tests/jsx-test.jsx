@@ -14,7 +14,7 @@ export default ({ title }) => {
       <button onClick={toggleVisibility}>Toggle visibility</button>
 
       
-      <RadioGroup value="2" size={3}>
+      <RadioGroup value="2" size={2}>
         <span slot="label">My Label</span>
         <Radio value="1">Option 1</Radio>
         <Radio value="2">Option 2</Radio>
