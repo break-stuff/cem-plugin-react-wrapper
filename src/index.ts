@@ -31,6 +31,7 @@ export default function reactWrapper({
   modulePath,
   descriptionSrc,
   slotDocs = true,
+  name = "index",
 }: Config = {}) {
   return {
     name: "cem-plugin-react-wrapper",
@@ -43,10 +44,11 @@ export default function reactWrapper({
         modulePath,
         descriptionSrc,
         slotDocs,
+        name,
       };
 
       createOutdir(outdir);
-      createWrappers(params.customElementsManifest);
+      createWrappers(name, params.customElementsManifest);
     },
   };
 }
@@ -57,7 +59,7 @@ function createOutdir(outdir: string) {
   }
 }
 
-function createWrappers(customElementsManifest: CustomElementsManifest) {
+function createWrappers(name: string, customElementsManifest: CustomElementsManifest) {
   const components = getComponents(customElementsManifest);
 
   components.forEach((component) => {
@@ -92,7 +94,7 @@ function createWrappers(customElementsManifest: CustomElementsManifest) {
     }
   });
 
-  generateManifests(components, config.outdir!, config.typescript!);
+  generateManifests(name, components, config.outdir!, config.typescript!);
 }
 
 function getComponents(customElementsManifest: CustomElementsManifest) {
@@ -149,14 +151,15 @@ function generateTypeDefinition(
 }
 
 function generateManifests(
+  name: string,
   components: Declaration[],
   outdir: string,
-  typescript: boolean
+  typescript: boolean,
 ) {
-  saveFile(outdir, "index.js", getManifestContentTemplate(components));
+  saveFile(outdir, `${name}.js`, getManifestContentTemplate(components));
 
   if (typescript) {
-    saveFile(outdir, "index.d.ts", getManifestContentTemplate(components));
+    saveFile(outdir, `${name}.d.ts`, getManifestContentTemplate(components));
   }
 }
 
