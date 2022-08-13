@@ -65,7 +65,7 @@ function createWrappers(customElementsManifest: CustomElementsManifest) {
   components.forEach((component) => {
     const events = getEventNames(component);
     const { booleanAttributes, attributes } = getAttributes(component);
-    const properties = getFields(component);
+    const properties = getFields(component, attributes, booleanAttributes);
     const componentModulePath = getModulePath(
       config.modulePath,
       component,
@@ -162,7 +162,7 @@ function generateManifests(
   }
 }
 
-function getFields(component: Declaration) {
+function getFields(component: Declaration, attributes: MappedAttribute[], booleanAttributes: MappedAttribute[]) {
   return component?.members?.filter(
     (member) =>
       member.kind === "field" &&
@@ -170,7 +170,9 @@ function getFields(component: Declaration) {
       member.privacy !== "private" &&
       member.privacy !== "protected" &&
       !member.attribute &&
-      member.type
+      member.type &&
+      !booleanAttributes.find((x) => x.name === member.name) &&
+      !attributes.find((x) => x.name === member.name)
   );
 }
 
@@ -461,12 +463,7 @@ function getSlotDocs(component: Declaration) {
 
 function getEventDocs(events: EventName[]) {
   return events
-    ?.map(
-      (event) =>
-        `  * - **${event.reactName}** - ${
-          event.description
-        }`
-    )
+    ?.map((event) => `  * - **${event.reactName}** - ${event.description}`)
     .join("\n");
 }
 
