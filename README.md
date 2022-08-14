@@ -177,12 +177,44 @@ Setting the `typescript` property to `true` will generate type definition files 
 
 ### Descriptions
 
-Using the `descriptionSrc` configuration, you can determine the source of the text that gets displayed in the editor autocomplete bubble. 
+Using the `descriptionSrc` configuration, you can determine the source of the text that gets displayed in the editor autocomplete bubble. This is useful if you want to provide alternate descriptions for your React users.
 
-If no value is provided, the plugin will use the `summary` property and then fall back to the `description` property if a summary is not available. 
+If no value is provided, the plugin will use the `summary` property and then fall back to the `description` property if a summary is not available.
 
 ![description section of autocomplete popup from vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/description.png?raw=true)
 
+
+**Note:** _Descriptions support multiline descriptions by breaking your descriptions up into multiple lines whereas summaries do not and will need to be manually added using `\n`.
+
+```js
+// description example
+
+/**
+ *
+ * Radio groups are used to group multiple radios or radio buttons so they function as a single form control. Here is its [documentation](https://my-docsite.com).
+ *
+ * Use it like this:
+ * ```html
+ * <RadioGroup value="2" size={3}>
+ *   <span slot="label">My Label</span>
+ *   <Radio value="1">Option 1</Radio>
+ *   <Radio value="2">Option 2</Radio>
+ *   <Radio value="3">Option 3</Radio>
+ * </RadioGroup>
+ * ```
+ * 
+ */
+```
+
+```js
+// summary example
+
+/**
+ *
+ * @summary Radios buttons allow users to select a single option from a group. Here is its [documentation](https://my-site.com/documentation).\n\nUse it like this:\n```html\n<Radio value="1" disabled>Your label</Radio>\n```
+ * 
+ * /
+```
 
 ## Attributes and Properties
 

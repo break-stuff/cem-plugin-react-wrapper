@@ -30,7 +30,7 @@ declare module "react" {
 
 /**
  *
- * My custom component. Here is its [documentation](https://my-site.com/documentation).
+ * Radios buttons allow users to select a single option from a group. Here is its [documentation](https://my-site.com/documentation).
  *
  * Use it like this:
  * ```html
