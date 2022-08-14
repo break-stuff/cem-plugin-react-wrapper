@@ -1,6 +1,6 @@
 {
   "name": "cem-plugin-react-wrapper",
-  "version": "1.0.0-beta.13",
+  "version": "1.0.0-beta.14",
   "description": "A React wrapper generator for web components",
   "main": "index.js",
   "module": "index.js",
