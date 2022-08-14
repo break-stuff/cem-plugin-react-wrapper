@@ -162,7 +162,11 @@ function generateManifests(
   }
 }
 
-function getFields(component: Declaration, attributes: MappedAttribute[], booleanAttributes: MappedAttribute[]) {
+function getFields(
+  component: Declaration,
+  attributes: MappedAttribute[],
+  booleanAttributes: MappedAttribute[]
+) {
   return component?.members?.filter(
     (member) =>
       member.kind === "field" &&
@@ -237,6 +241,17 @@ function addAttribute(
   attribute: MappedAttribute,
   componentAttributes: ComponentAttributes
 ) {
+  const existingAttr = componentAttributes.attributes.find(
+    (x) => x.name === attribute.name
+  );
+  const existingBool = componentAttributes.booleanAttributes.find(
+    (x) => x.name === attribute.name
+  );
+
+  if (existingAttr || existingBool) {
+    return;
+  }
+
   if (attribute?.type?.text.includes("boolean")) {
     componentAttributes.booleanAttributes.push(attribute);
   } else {
