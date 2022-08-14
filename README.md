@@ -184,7 +184,7 @@ If no value is provided, the plugin will use the `summary` property and then fal
 ![description section of autocomplete popup from vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/description.png?raw=true)
 
 
-**Note:** _Descriptions support multiline descriptions by breaking your descriptions up into multiple lines whereas summaries do not and will need to be manually added using `\n`.
+**Note:** _Descriptions support multiple lines by breaking the comment up into multiple lines whereas summaries do not and will need to be manually added using `\n`._
 
 ```js
 // description example
