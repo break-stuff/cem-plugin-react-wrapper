@@ -14,6 +14,13 @@ This tool leverages the [Custom Element Manifest Analyzer](https://custom-elemen
 
 ## Usage
 
+### Pre-installation
+
+You need to insure the following steps have been taken in your component library prior to installing and using this plugin: 
+
+- install and set up the [Custom Elements Manifest Analyzer](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/)
+- create a [config file](https://custom-elements-manifest.open-wc.org/analyzer/config/#config-file)
+
 ### Install
 
 ```bash
@@ -28,7 +35,10 @@ npm i -D cem-plugin-react-wrapper
 import { reactWrapper } from "cem-plugin-react-wrapper";
 
 export default {
-  plugins: [reactWrapper()],
+  ...
+  plugins: [
+    reactWrapper()
+  ],
 };
 ```
 
@@ -74,7 +84,7 @@ export default {
       /** If true, types will be created for your wrappers - default is "true" */
       typescript: true,
 
-      /** The property from the component object constructed by the CEM Analyzer */
+      /** The property name from the component object constructed by the CEM Analyzer */
       descriptionSrc: 'description',
 
       /** Displays the slot section of the element description */
@@ -164,6 +174,15 @@ import { MyOtherElement } from './react/MyOtherElement.js';
 ### TypeScript
 
 Setting the `typescript` property to `true` will generate type definition files (`.d.ts`) files for each of the components. The property is `true` by default.
+
+### Descriptions
+
+Using the `descriptionSrc` configuration, you can determine the source of the text that gets displayed in the editor autocomplete bubble. 
+
+If no value is provided, the plugin will use the `summary` property and then fall back to the `description` property if a summary is not available. 
+
+![description section of autocomplete popup from vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/description.png?raw=true)
+
 
 ## Attributes and Properties
 

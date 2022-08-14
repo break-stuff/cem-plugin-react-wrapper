@@ -49,7 +49,7 @@ declare module "react" {
 /**
  *
  *
- * Radio Group - Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
+ * Radio groups are used to group multiple radios or radio buttons so they function as a single form control. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
  *
  * Use it like this:
  * ```html

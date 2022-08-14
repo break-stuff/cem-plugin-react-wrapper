@@ -59,7 +59,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "\nRadio Group - Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).\n\nUse it like this:\n```html\n<RadioGroup value=\"2\" size={3}>\n  <span slot=\"label\">My Label</span>\n  <Radio value=\"1\">Option 1</Radio>\n  <Radio value=\"2\">Option 2</Radio>\n  <Radio value=\"3\">Option 3</Radio>\n</RadioGroup>\n```",
+          "description": "\nRadio groups are used to group multiple radios or radio buttons so they function as a single form control. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).\n\nUse it like this:\n```html\n<RadioGroup value=\"2\" size={3}>\n  <span slot=\"label\">My Label</span>\n  <Radio value=\"1\">Option 1</Radio>\n  <Radio value=\"2\">Option 2</Radio>\n  <Radio value=\"3\">Option 3</Radio>\n</RadioGroup>\n```",
           "name": "RadioGroup",
           "cssProperties": [
             {
