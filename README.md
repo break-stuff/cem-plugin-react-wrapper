@@ -16,7 +16,7 @@ This tool leverages the [Custom Element Manifest Analyzer](https://custom-elemen
 
 ### Pre-installation
 
-You need to insure the following steps have been taken in your component library prior to installing and using this plugin: 
+Insure the following steps have been taken in your component library prior to using this plugin: 
 
 - install and set up the [Custom Elements Manifest Analyzer](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/)
 - create a [config file](https://custom-elements-manifest.open-wc.org/analyzer/config/#config-file)
@@ -40,6 +40,20 @@ export default {
     reactWrapper()
   ],
 };
+```
+
+### Enjoy!
+
+Once you run the analyzer, you should see a new directory (the default directory name is `react`) with the component wrappers and their types!
+
+You should now be able to start using your "react" components or deploy them with your component library for others to enjoy.
+
+```js
+import { MyElement, MyOtherElement } from './react';
+
+// or 
+
+import { MyElement, MyOtherElement } from 'my-component-library/react';
 ```
 
 ## Configuration
