@@ -36,6 +36,14 @@ export default function reactWrapper({
   return {
     name: "cem-plugin-react-wrapper",
     packageLinkPhase(params: any) {
+      console.log(
+        "\u001b[" +
+          32 +
+          "m" +
+          "[react-wrapper] - Generating Components" +
+          "\u001b[0m"
+      );
+
       config = {
         exclude,
         attributeMapping,

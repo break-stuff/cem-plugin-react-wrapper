@@ -21,7 +21,7 @@
               "type": {
                 "text": "string"
               },
-              "description": "The value assigned to the radio group",
+              "description": "The value assigned to the radio button. This will reflect in the radio group when clicked.",
               "name": "value",
               "fieldName": "value"
             },

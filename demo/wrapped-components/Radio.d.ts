@@ -17,7 +17,7 @@ export interface RadioProps {
   /** Disables the radio button */
   disabled?: boolean;
 
-  /** The value assigned to the radio group */
+  /** The value assigned to the radio button. This will reflect in the radio group when clicked. */
   value?: string;
 }
 

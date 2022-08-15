@@ -8,6 +8,10 @@ Make your web components React compatible with as little as one line of code!
 - Configurable
 - Very easy to set up and use
 
+
+![an animated image of the autocomplere functionality in vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/demo.gif?raw=true)
+
+
 ---
 
 This tool leverages the [Custom Element Manifest Analyzer](https://custom-elements-manifest.open-wc.org/) that automatically generates React wrappers for your custom elements based on on the data from the custom elements manifest (CEM).
