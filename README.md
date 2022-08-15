@@ -2,7 +2,7 @@
 
 Make your web components React compatible with as little as one line of code!
 
-- No manually mapping
+- No manual event mapping
 - Automatically generates types for your components and props
 - Provides editor autocomplete features and documentation
 - Configurable
@@ -20,10 +20,10 @@ This tool leverages the [Custom Element Manifest Analyzer](https://custom-elemen
 
 ### Pre-installation
 
-Insure the following steps have been taken in your component library prior to using this plugin: 
+Ensure the following steps have been taken in your component library prior to using this plugin: 
 
-- install and set up the [Custom Elements Manifest Analyzer](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/)
-- create a [config file](https://custom-elements-manifest.open-wc.org/analyzer/config/#config-file)
+- Install and set up the [Custom Elements Manifest Analyzer](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/)
+- Create a [config file](https://custom-elements-manifest.open-wc.org/analyzer/config/#config-file)
 
 ### Install
 
