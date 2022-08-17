@@ -24,7 +24,7 @@ export function getModulePath(
     );
   }
 
-  const directories = outdir.split("/");
+  const directories = outdir?.split("/");
   return path.join(directories.map((_) => "../").join(""), packageJson.module);
 }
 
@@ -35,7 +35,7 @@ export function saveFile(outdir: string, fileName: string, contents: string) {
   );
 }
 
-export function toCamelCase(value: string) {
+export function toCamelCase(value: string = '') {
   const arr = value.split("-");
   const capital = arr.map((item, index) =>
     index

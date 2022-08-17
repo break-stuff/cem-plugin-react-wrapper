@@ -207,6 +207,10 @@ function getAttributes(component: Declaration): ComponentAttributes {
   };
 
   component?.attributes?.forEach((attr) => {
+    if(!attr?.name) {
+      return;
+    }
+    
     /** Handle reserved keyword attributes */
     if (RESERVED_WORDS.includes(attr?.name)) {
       /** If we have a user-specified mapping, rename */
@@ -467,7 +471,7 @@ function getDescription(component: Declaration) {
   return (
     description
       ?.split("\n")
-      .map((y) => y.split("\\n").map((x) => ` * ${x}`))
+      ?.map((y) => y?.split("\\n").map((x) => ` * ${x}`))
       .flat()
       .join("\n") || "*"
   );
