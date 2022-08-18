@@ -73,7 +73,7 @@ function createWrappers(customElementsManifest: CustomElementsManifest) {
   components.forEach((component) => {
     const events = getEventNames(component);
     const { booleanAttributes, attributes } = getAttributes(component);
-    const properties = getFields(component, attributes, booleanAttributes);
+    const properties = getProperties(component, attributes, booleanAttributes);
     const componentModulePath = getModulePath(
       config.modulePath,
       component,
@@ -170,7 +170,7 @@ function generateManifests(
   }
 }
 
-function getFields(
+function getProperties(
   component: Declaration,
   attributes: MappedAttribute[],
   booleanAttributes: MappedAttribute[]
@@ -183,8 +183,8 @@ function getFields(
       member.privacy !== "protected" &&
       !member.attribute &&
       member.type &&
-      !booleanAttributes.find((x) => x.name === member.name) &&
-      !attributes.find((x) => x.name === member.name)
+      !booleanAttributes.find((x) => x.fieldName === member.name) &&
+      !attributes.find((x) => x.fieldName === member.name)
   );
 }
 
@@ -210,7 +210,7 @@ function getAttributes(component: Declaration): ComponentAttributes {
     if(!attr?.name) {
       return;
     }
-    
+
     /** Handle reserved keyword attributes */
     if (RESERVED_WORDS.includes(attr?.name)) {
       /** If we have a user-specified mapping, rename */
