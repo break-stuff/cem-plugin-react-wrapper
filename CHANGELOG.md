@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- Update logic to use consistent naming conventions for properties
+
 ## 1.0.1
 
 - Update logic to exclude duplicate attributes and properties
