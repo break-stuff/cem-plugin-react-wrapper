@@ -22,16 +22,14 @@
                 "text": "string"
               },
               "description": "The value assigned to the radio button. This will reflect in the radio group when clicked.",
-              "name": "value",
-              "fieldName": "value"
+              "name": "value"
             },
             {
               "type": {
                 "text": "boolean"
               },
               "description": "Disables the radio button",
-              "name": "disabled",
-              "fieldName": "disabled"
+              "name": "disabled"
             }
           ],
           "superclass": {
@@ -132,24 +130,21 @@
                 "text": "boolean"
               },
               "description": "Disables the element",
-              "name": "disabled",
-              "fieldName": "disabled"
+              "name": "disabled"
             },
             {
               "type": {
                 "text": "string"
               },
               "description": "The value of the selected radio",
-              "name": "value",
-              "fieldName": "value"
+              "name": "value"
             },
             {
               "type": {
                 "text": "1|2|3|4"
               },
               "description": "This will control the size of radio buttons",
-              "name": "size",
-              "fieldName": "size"
+              "name": "size"
             }
           ],
           "superclass": {

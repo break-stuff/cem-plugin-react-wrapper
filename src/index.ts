@@ -293,30 +293,26 @@ function getEventTemplates(eventNames: EventName[]) {
 
 function getBooleanAttributeTemplates(booleanAttributes: MappedAttribute[]) {
   return booleanAttributes?.map((attr) => {
-    attr.fieldName = attr?.fieldName || toCamelCase(attr?.name);
-
     return `useEffect(() => {
-        if(${attr?.fieldName} !== undefined) {
-          if(${attr?.fieldName}) {
+        if(${toCamelCase(attr?.name)} !== undefined) {
+          if(${toCamelCase(attr?.name)}) {
             component?.setAttribute('${attr.name}', '');
           } else {
             component?.removeAttribute('${attr.name}');
           }
         }
-      }, [${attr?.fieldName}])
+      }, [${toCamelCase(attr?.name)}])
     `;
   });
 }
 
 function getAttributeTemplates(attributes: MappedAttribute[]) {
   return attributes?.map((attr) => {
-    attr.fieldName = attr?.fieldName || toCamelCase(attr?.name);
-
     return `useEffect(() => {
-        if(${attr?.fieldName} !== undefined && component?.getAttribute('${attr?.name}') !== String(${attr?.fieldName})) {
-                  component?.setAttribute('${attr?.name}', String(${attr?.fieldName}))
+        if(${toCamelCase(attr?.name)} !== undefined && component?.getAttribute('${attr?.name}') !== String(${toCamelCase(attr?.name)})) {
+                  component?.setAttribute('${attr?.name}', String(${toCamelCase(attr?.name)}))
         }
-      }, [${attr?.fieldName}])
+      }, [${toCamelCase(attr?.name)}])
   `;
   });
 }
@@ -391,10 +387,9 @@ function getReactComponentTemplate(
           ${useEffect ? "ref," : ""} 
           ${[...booleanAttributes, ...attributes]
             .map((attr) => {
-              attr.fieldName = attr?.fieldName || toCamelCase(attr?.name);
-              return attr?.name === attr?.fieldName
+              return attr?.name === toCamelCase(attr?.name)
                 ? attr?.name
-                : `"${attr?.name}": ${attr?.fieldName}`;
+                : `"${attr?.name}": ${toCamelCase(attr?.name)}`;
             })
             .join(", ")}
         },
