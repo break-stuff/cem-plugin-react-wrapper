@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Add docs and config for CSS Properties and CSS Parts
+
 ## 1.0.2
 
 - Update logic to use consistent naming conventions for properties

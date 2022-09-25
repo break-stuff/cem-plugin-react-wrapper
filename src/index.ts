@@ -8,6 +8,8 @@ import {
   MappedAttribute,
   ComponentAttributes,
   Member,
+  CssProperty,
+  CssPart,
 } from "./types";
 
 import {
@@ -32,6 +34,8 @@ export default function reactWrapper({
   descriptionSrc,
   slotDocs = true,
   eventDocs = true,
+  cssPropertiesDocs = true,
+  cssPartsDocs = true,
 }: Config = {}) {
   return {
     name: "cem-plugin-react-wrapper",
@@ -53,6 +57,8 @@ export default function reactWrapper({
         descriptionSrc,
         slotDocs,
         eventDocs,
+        cssPartsDocs,
+        cssPropertiesDocs,
       };
 
       createOutdir(outdir);
@@ -207,7 +213,7 @@ function getAttributes(component: Declaration): ComponentAttributes {
   };
 
   component?.attributes?.forEach((attr) => {
-    if(!attr?.name) {
+    if (!attr?.name) {
       return;
     }
 
@@ -309,8 +315,14 @@ function getBooleanAttributeTemplates(booleanAttributes: MappedAttribute[]) {
 function getAttributeTemplates(attributes: MappedAttribute[]) {
   return attributes?.map((attr) => {
     return `useEffect(() => {
-        if(${toCamelCase(attr?.name)} !== undefined && component?.getAttribute('${attr?.name}') !== String(${toCamelCase(attr?.name)})) {
-                  component?.setAttribute('${attr?.name}', String(${toCamelCase(attr?.name)}))
+        if(${toCamelCase(
+          attr?.name
+        )} !== undefined && component?.getAttribute('${
+      attr?.name
+    }') !== String(${toCamelCase(attr?.name)})) {
+                  component?.setAttribute('${attr?.name}', String(${toCamelCase(
+      attr?.name
+    )}))
         }
       }, [${toCamelCase(attr?.name)}])
   `;
@@ -451,6 +463,20 @@ function getTypeDefinitionTemplate(
  ${getEventDocs(events)}`
           : "*"
       }
+      ${
+        has(component.cssProperties) && config.cssPropertiesDocs
+          ? `*
+  * **CSS Properties** 
+ ${getCssPropertyDocs(component.cssProperties)}`
+          : "*"
+      }
+      ${
+        has(component.cssParts) && config.cssPartsDocs
+          ? `*
+  * **CSS Parts** 
+ ${getCssPartsDocs(component.cssParts)}`
+          : "*"
+      }
       */
     export declare function ${component.name}({children${
     params ? "," : ""
@@ -486,6 +512,21 @@ function getSlotDocs(component: Declaration) {
 function getEventDocs(events: EventName[]) {
   return events
     ?.map((event) => `  * - **${event.reactName}** - ${event.description}`)
+    .join("\n");
+}
+
+function getCssPropertyDocs(properties: CssProperty[]) {
+  return properties
+    ?.map(
+      (prop) =>
+        `  * - **${prop.name}** - ${prop.description} _(default: ${prop.default})_`
+    )
+    .join("\n");
+}
+
+function getCssPartsDocs(parts: CssPart[]) {
+  return parts
+    ?.map((part) => `  * - **${part.name}** - ${part.description}`)
     .join("\n");
 }
 

@@ -13,6 +13,8 @@ export interface Config {
   descriptionSrc?: 'description' | 'summary';
   slotDocs?: boolean;
   eventDocs?: boolean;
+  cssPropertiesDocs?: boolean;
+  cssPartsDocs?: boolean;
 }
 
 export interface MappedAttribute extends Attribute {

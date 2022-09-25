@@ -69,6 +69,13 @@ declare module "react" {
  * - **onCustomEvent** - some description for custom-event
  * - **onTypedEvent** - some description for typed-event
  * - **onTypedCustomEvent** - some description for typed-custom-event
+ *
+ * **CSS Properties**
+ * - **--text-color** - Controls the color of foo _(default: undefined)_
+ * - **--background-color** - Controls the color of bar _(default: red)_
+ *
+ * **CSS Parts**
+ * - **bar** - Styles the color of bar
  */
 export declare function RadioGroup({
   children,

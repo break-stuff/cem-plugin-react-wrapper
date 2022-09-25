@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Radio, RadioGroup } from "../wrapped-components";
 
 export default () => {

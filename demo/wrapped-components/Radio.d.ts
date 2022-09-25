@@ -40,6 +40,8 @@ declare module "react" {
  * **Slots**
  * - _default_ - add text here to label your radio button
  *
+ *
+ *
  */
 export declare function Radio({
   children,
