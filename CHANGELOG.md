@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.3
+## 1.1.0
 
 - Add docs and config for CSS Properties and CSS Parts
 
