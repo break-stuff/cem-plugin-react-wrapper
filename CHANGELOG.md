@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+- Generate smaller package size
+- Fix custom event listeners
+- Resolve custom types for attributes, props, and events
+
 ## 1.1.0
 
 - Add docs and config for CSS Properties and CSS Parts
