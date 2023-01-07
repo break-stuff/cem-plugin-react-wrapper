@@ -18,6 +18,7 @@
  * @attr {boolean} disabled - Disables the element
  * @attribute {string} value - The value of the selected radio
  * @attribute {1|2|3|4} size - This will control the size of radio buttons
+ * @attribute help-text - This will control the size of radio buttons
  *
  * @csspart bar - Styles the color of bar
  *
@@ -32,7 +33,7 @@
  *
  * @fires custom-event - some description for custom-event
  * @fires {Event} typed-event - some description for typed-event
- * @event {CustomEvent} typed-custom-event - some description for typed-custom-event
+ * @event {MyType} typed-custom-event - some description for typed-custom-event
  *
  */
 class RadioGroup extends HTMLElement {}

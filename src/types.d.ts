@@ -19,6 +19,7 @@ export interface Config {
 
 export interface MappedAttribute extends Attribute {
   originalName?: string;
+  propName?: string;
 }
 
 export interface ComponentAttributes {
@@ -30,6 +31,8 @@ export interface EventName {
   name: string;
   reactName: string;
   description: string;
+  type?: string;
+  custom?: boolean;
 }
 
 declare module '@custom-elements-manifest/analyzer/src/create.js';
@@ -123,10 +126,10 @@ interface Event {
 
 interface Attribute {
   name: string;
-  type: Type;
+  type?: Type;
   default?: string;
   description: string;
-  fieldName: string;
+  fieldName?: string;
 }
 
 interface SuperClass {

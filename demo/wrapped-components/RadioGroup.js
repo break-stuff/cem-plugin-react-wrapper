@@ -1,4 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
+import {
+  useAttribute,
+  useBooleanAttribute,
+  useProperties,
+  useEventListener,
+} from "./react-utils";
 import "../components/radio-group.js";
 
 export function RadioGroup({
@@ -6,85 +12,53 @@ export function RadioGroup({
   disabled,
   value,
   size,
+  helpText,
+  id,
+  className,
+  style,
+  slot,
   prop1,
   prop2,
   onCustomEvent,
   onTypedEvent,
   onTypedCustomEvent,
+  onClick,
 }) {
   const ref = useRef(null);
-  const component = ref.current;
 
-  /** Event listeners - run once */
+  /** Event listeners */
+  useEventListener(ref, "custom-event", onCustomEvent);
+  useEventListener(ref, "typed-event", onTypedEvent);
+  useEventListener(ref, "typed-custom-event", onTypedCustomEvent);
+  useEventListener(ref, "click", onClick);
 
-  useEffect(() => {
-    if (onCustomEvent !== undefined) {
-      component?.addEventListener("custom-event", onCustomEvent);
-    }
-  }, []);
+  /** Boolean attributes */
+  useBooleanAttribute(ref, "disabled", disabled);
 
-  useEffect(() => {
-    if (onTypedEvent !== undefined) {
-      component?.addEventListener("typed-event", onTypedEvent);
-    }
-  }, []);
+  /** Attributes */
+  useAttribute(ref, "value", value);
+  useAttribute(ref, "size", size);
+  useAttribute(ref, "help-text", helpText);
+  useAttribute(ref, "id", id);
+  useAttribute(ref, "class", className);
+  useAttribute(ref, "style", style);
+  useAttribute(ref, "slot", slot);
 
-  useEffect(() => {
-    if (onTypedCustomEvent !== undefined) {
-      component?.addEventListener("typed-custom-event", onTypedCustomEvent);
-    }
-  }, []);
-
-  /** Boolean attributes - run whenever an attr has changed */
-  useEffect(() => {
-    if (disabled !== undefined) {
-      if (disabled) {
-        component?.setAttribute("disabled", "");
-      } else {
-        component?.removeAttribute("disabled");
-      }
-    }
-  }, [disabled]);
-
-  /** Attributes - run whenever an attr has changed */
-  useEffect(() => {
-    if (
-      value !== undefined &&
-      component?.getAttribute("value") !== String(value)
-    ) {
-      component?.setAttribute("value", String(value));
-    }
-  }, [value]);
-  useEffect(() => {
-    if (
-      size !== undefined &&
-      component?.getAttribute("size") !== String(size)
-    ) {
-      component?.setAttribute("size", String(size));
-    }
-  }, [size]);
-
-  /** Properties - run whenever a property has changed */
-
-  useEffect(() => {
-    if (prop1 !== undefined && component?.prop1 !== prop1) {
-      component?.prop1 = prop1;
-    }
-  }, [prop1]);
-
-  useEffect(() => {
-    if (prop2 !== undefined && component?.prop2 !== prop2) {
-      component?.prop2 = prop2;
-    }
-  }, [prop2]);
+  /** Properties */
+  useProperties(ref, "prop1", prop1);
+  useProperties(ref, "prop2", prop2);
 
   return React.createElement(
     "radio-group",
     {
       ref,
-      disabled,
       value,
       size,
+      "help-text": helpText,
+      id,
+      className,
+      style,
+      slot,
     },
     children
   );

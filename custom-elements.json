@@ -118,7 +118,7 @@
             },
             {
               "type": {
-                "text": "CustomEvent"
+                "text": "MyType"
               },
               "description": "some description for typed-custom-event",
               "name": "typed-custom-event"
@@ -145,6 +145,10 @@
               },
               "description": "This will control the size of radio buttons",
               "name": "size"
+            },
+            {
+              "description": "This will control the size of radio buttons",
+              "name": "help-text"
             }
           ],
           "superclass": {

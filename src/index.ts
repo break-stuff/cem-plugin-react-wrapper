@@ -1,4 +1,5 @@
 import fs from "fs";
+import { baseEvents, baseProperties } from "./global.js";
 import {
   Attribute,
   CustomElementsManifest,
@@ -13,13 +14,14 @@ import {
 } from "./types";
 
 import {
-  toCamelCase,
   createEventName,
+  getModulePath,
+  getPackageJson,
   has,
   RESERVED_WORDS,
-  getModulePath,
   saveFile,
-  getPackageJson,
+  saveReactUtils,
+  toCamelCase,
 } from "./utils.js";
 
 const packageJson = getPackageJson();
@@ -40,13 +42,7 @@ export default function reactWrapper({
   return {
     name: "cem-plugin-react-wrapper",
     packageLinkPhase(params: any) {
-      console.log(
-        "\u001b[" +
-          32 +
-          "m" +
-          "[react-wrapper] - Generating Components" +
-          "\u001b[0m"
-      );
+      console.log("[react-wrapper] - Generating React Wrappers");
 
       config = {
         exclude,
@@ -63,6 +59,14 @@ export default function reactWrapper({
 
       createOutdir(outdir);
       createWrappers(params.customElementsManifest);
+
+      console.log(
+        "\u001b[" +
+          32 +
+          "m" +
+          "[react-wrapper] - Successfully Generated React Wrappers\n" +
+          "\u001b[0m"
+      );
     },
   };
 }
@@ -71,13 +75,15 @@ function createOutdir(outdir: string) {
   if (!fs.existsSync(outdir)) {
     fs.mkdirSync(outdir);
   }
+
+  saveReactUtils(outdir);
 }
 
 function createWrappers(customElementsManifest: CustomElementsManifest) {
   const components = getComponents(customElementsManifest);
 
   components.forEach((component) => {
-    const events = getEventNames(component);
+    const events = [...getEventNames(component), ...baseEvents];
     const { booleanAttributes, attributes } = getAttributes(component);
     const properties = getProperties(component, attributes, booleanAttributes);
     const componentModulePath = getModulePath(
@@ -189,8 +195,8 @@ function getProperties(
       member.privacy !== "protected" &&
       !member.attribute &&
       member.type &&
-      !booleanAttributes.find((x) => x.fieldName === member.name) &&
-      !attributes.find((x) => x.fieldName === member.name)
+      !booleanAttributes.find((x) => x.propName === member.name) &&
+      !attributes.find((x) => x.propName === member.name)
   );
 }
 
@@ -201,13 +207,17 @@ function getEventNames(component: Declaration): EventName[] {
         name: event.name,
         reactName: createEventName(event),
         description: event.description,
+        type: event.type?.text,
       };
     }) || []
   );
 }
 
 function getAttributes(component: Declaration): ComponentAttributes {
-  const result = {
+  const result: {
+    attributes: MappedAttribute[];
+    booleanAttributes: MappedAttribute[];
+  } = {
     attributes: [],
     booleanAttributes: [],
   };
@@ -231,19 +241,27 @@ function getAttributes(component: Declaration): ComponentAttributes {
     addAttribute(attr as MappedAttribute, result);
   });
 
+  addGlobalAttributes(result.attributes);
+
   return result;
 }
 
+function addGlobalAttributes(attributes: MappedAttribute[]) {
+  baseProperties.forEach((baseAttr: MappedAttribute) => {
+    if (!attributes.find((x) => x.name === baseAttr.name)) {
+      attributes.push(baseAttr);
+    }
+  });
+}
+
 function getParams(
-  booleanAttributes: Attribute[] = [],
-  attributes: Attribute[] = [],
+  booleanAttributes: MappedAttribute[] = [],
+  attributes: MappedAttribute[] = [],
   properties: Member[] = [],
   eventNames: EventName[] = []
 ) {
   return [
-    ...[...booleanAttributes, ...attributes].map((attr) =>
-      toCamelCase(attr.name)
-    ),
+    ...[...booleanAttributes, ...attributes].map((attr) => attr.propName),
     ...properties?.map((prop) => prop.name),
     ...eventNames?.map((event) => event.reactName),
   ]?.join(", ");
@@ -270,10 +288,13 @@ function addAttribute(
     return;
   }
 
+  const newAttribute = {...attribute};
+  newAttribute.propName = toCamelCase(attribute.name);
+
   if (attribute?.type?.text.includes("boolean")) {
-    componentAttributes.booleanAttributes.push(attribute);
+    componentAttributes.booleanAttributes.push(newAttribute);
   } else {
-    componentAttributes.attributes.push(attribute);
+    componentAttributes.attributes.push(newAttribute);
   }
 }
 
@@ -287,57 +308,28 @@ function getMappedAttribute(attr: Attribute): MappedAttribute {
 
 function getEventTemplates(eventNames: EventName[]) {
   return eventNames.map(
-    (event) => `
-      useEffect(() => {
-        if(${event.reactName} !== undefined) {
-          component?.addEventListener('${event.name}', ${event.reactName});
-        }
-      }, [])
-    `
+    (event) => `useEventListener(ref, '${event.name}', ${event.reactName});`
   );
 }
 
 function getBooleanAttributeTemplates(booleanAttributes: MappedAttribute[]) {
-  return booleanAttributes?.map((attr) => {
-    return `useEffect(() => {
-        if(${toCamelCase(attr?.name)} !== undefined) {
-          if(${toCamelCase(attr?.name)}) {
-            component?.setAttribute('${attr.name}', '');
-          } else {
-            component?.removeAttribute('${attr.name}');
-          }
-        }
-      }, [${toCamelCase(attr?.name)}])
-    `;
-  });
+  return booleanAttributes?.map(
+    (attr) => `useBooleanAttribute(ref, '${attr.name}', ${attr?.propName});`
+  );
 }
 
 function getAttributeTemplates(attributes: MappedAttribute[]) {
-  return attributes?.map((attr) => {
-    return `useEffect(() => {
-        if(${toCamelCase(
-          attr?.name
-        )} !== undefined && component?.getAttribute('${
-      attr?.name
-    }') !== String(${toCamelCase(attr?.name)})) {
-                  component?.setAttribute('${attr?.name}', String(${toCamelCase(
-      attr?.name
-    )}))
-        }
-      }, [${toCamelCase(attr?.name)}])
-  `;
-  });
+  return attributes?.map(
+    (attr) =>
+      `useAttribute(ref, '${attr.originalName || attr?.name}', ${
+        attr?.propName
+      });`
+  );
 }
 
 function getPropTemplates(properties: Member[]) {
   return properties?.map(
-    (member) => `
-      useEffect(() => {
-        if(${member.name} !== undefined && component?.${member.name} !== ${member.name}) {
-          component?.${member.name} = ${member.name};
-        }
-      }, [${member.name}])
-  `
+    (member) => `useProperties(ref, '${member.name}', ${member.name});`
   );
 }
 
@@ -361,34 +353,35 @@ function getReactComponentTemplate(
     has(booleanAttrTemplates);
 
   return `
-    import React${useEffect ? ", {useEffect, useRef}" : ""} from "react";
+    import React${useEffect ? ", { useRef }" : ""} from "react";
+    import { useAttribute, useBooleanAttribute, useProperties, useEventListener } from './react-utils';
     import '${modulePath}';
 
     export function ${component.name}({children${
     params ? "," : ""
   } ${params}}) {
       ${useEffect ? `const ref = useRef(null);` : ""}
-      ${useEffect ? `const component = ref.current;` : ""}
 
-      ${has(eventTemplates) ? "/** Event listeners - run once */" : ""}
+      ${has(eventTemplates) ? "/** Event listeners */" : ""}
       ${eventTemplates?.join("") || ""}
+
       ${
         has(booleanAttrTemplates)
-          ? "/** Boolean attributes - run whenever an attr has changed */"
+          ? "/** Boolean attributes */"
           : ""
       }
       ${booleanAttrTemplates?.join("") || ""}
 
       ${
         has(attrTemplates)
-          ? "/** Attributes - run whenever an attr has changed */"
+          ? "/** Attributes */"
           : ""
       }
       ${attrTemplates?.join("") || ""}
 
       ${
         has(propTemplates)
-          ? "/** Properties - run whenever a property has changed */"
+          ? "/** Properties */"
           : ""
       }
       ${propTemplates?.join("") || ""}
@@ -397,11 +390,11 @@ function getReactComponentTemplate(
         "${component.tagName}",
         { 
           ${useEffect ? "ref," : ""} 
-          ${[...booleanAttributes, ...attributes]
+          ${attributes
             .map((attr) => {
-              return attr?.name === toCamelCase(attr?.name)
+              return attr?.name === attr?.propName
                 ? attr?.name
-                : `"${attr?.name}": ${toCamelCase(attr?.name)}`;
+                : `"${attr?.name}": ${attr?.propName}`;
             })
             .join(", ")}
         },
@@ -424,19 +417,19 @@ function getTypeDefinitionTemplate(
   return `
     import React from "react";
     import '${modulePath}';
+    import type * as ${component.name}Types from '${modulePath.replace(
+    ".js",
+    ""
+  )}';
    
-    declare global {
-      namespace JSX {
-        interface IntrinsicElements {
-            '${
-              component.tagName
-            }': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-        }
-      }
-    }
-
-    export interface ${component.name}Props { 
-      ${getPropsInterface(booleanAttributes, attributes, properties, events)} 
+    export interface ${component.name}Props {
+      ${getPropsInterface(
+        component.name,
+        booleanAttributes,
+        attributes,
+        properties,
+        events
+      )} 
     }
 
     declare module "react" {
@@ -531,37 +524,55 @@ function getCssPartsDocs(parts: CssPart[]) {
 }
 
 function getPropsInterface(
-  booleanAttributes: Attribute[],
-  attributes: Attribute[],
+  componentName: string,
+  booleanAttributes: MappedAttribute[],
+  attributes: MappedAttribute[],
   properties: Member[],
   events: EventName[]
 ) {
   return [
-    "children?: any;",
     ...(booleanAttributes || []).map(
       (attr) => `
         /** ${attr.description} */
-        ${toCamelCase(attr.name)}?: ${attr?.type?.text || "boolean"};
+        ${attr?.propName}?: ${attr?.type?.text || "boolean"};
       `
     ),
     ...(attributes || []).map(
       (attr) => `
         /** ${attr.description} */
-        ${toCamelCase(attr.name)}?: ${attr?.type?.text || "string"};
+        ${attr.propName}?: ${getPropType(componentName, attr?.type?.text)};
       `
     ),
     ...(properties || []).map(
       (prop) => `
         /** ${prop.description} */
-        ${toCamelCase(prop.name)}?: ${prop?.type?.text || "string"};
+        ${toCamelCase(prop.name)}?: ${getPropType(
+        componentName,
+        prop?.type?.text
+      )};
       `
     ),
     ...events?.map(
       (event) => `
         /** ${event.description} */
-        ${event.reactName}?: EventListenerOrEventListenerObject;
+        ${event.reactName}?: (event: ${getEventType(
+        componentName,
+        event.type,
+        event.custom
+      )}) => void;
       `
     ),
+    `
+    /** Used to help React identify which items have changed, are added, or are removed within a list. */ 
+    key?: string;
+    `,
+    `
+    children?: any;
+    `,
+    `
+    /** A mutable ref object whose \`.current\` property is initialized to the passed argument (\`initialValue\`). The returned object will persist for the full lifetime of the component. */
+    ref?: any;
+    `
   ]?.join("");
 }
 
@@ -569,4 +580,39 @@ function getManifestContentTemplate(components: Declaration[]) {
   return components
     .map((component) => `export * from './${component.name}';`)
     .join("");
+}
+
+function getEventType(
+  componentName: string,
+  eventType?: string,
+  eventCustom?: boolean
+) {
+  if (eventCustom) {
+    return eventType;
+  }
+
+  const base = "CustomEvent";
+
+  if (!eventType || eventType === "Event" || eventType === "CustomEvent") {
+    return base;
+  }
+
+  return (
+    base +
+    (eventType.includes(":") ||
+    eventType.includes("{") ||
+    eventType.includes("[")
+      ? `<${eventType}>`
+      : `<${componentName}Types.${eventType}>`)
+  );
+}
+
+function getPropType(componentName: string, propType?: string) {
+  if (!propType) {
+    return "string";
+  }
+
+  return propType[0] !== propType[0].toLowerCase()
+    ? `${componentName}Types.${propType}`
+    : propType;
 }

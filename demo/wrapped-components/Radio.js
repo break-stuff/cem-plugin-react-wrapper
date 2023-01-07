@@ -1,37 +1,46 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
+import {
+  useAttribute,
+  useBooleanAttribute,
+  useProperties,
+  useEventListener,
+} from "./react-utils";
 import "../components/radio-group.js";
 
-export function Radio({ children, disabled, value }) {
+export function Radio({
+  children,
+  disabled,
+  value,
+  id,
+  className,
+  style,
+  slot,
+  onClick,
+}) {
   const ref = useRef(null);
-  const component = ref.current;
 
-  /** Boolean attributes - run whenever an attr has changed */
-  useEffect(() => {
-    if (disabled !== undefined) {
-      if (disabled) {
-        component?.setAttribute("disabled", "");
-      } else {
-        component?.removeAttribute("disabled");
-      }
-    }
-  }, [disabled]);
+  /** Event listeners */
+  useEventListener(ref, "click", onClick);
 
-  /** Attributes - run whenever an attr has changed */
-  useEffect(() => {
-    if (
-      value !== undefined &&
-      component?.getAttribute("value") !== String(value)
-    ) {
-      component?.setAttribute("value", String(value));
-    }
-  }, [value]);
+  /** Boolean attributes */
+  useBooleanAttribute(ref, "disabled", disabled);
+
+  /** Attributes */
+  useAttribute(ref, "value", value);
+  useAttribute(ref, "id", id);
+  useAttribute(ref, "class", className);
+  useAttribute(ref, "style", style);
+  useAttribute(ref, "slot", slot);
 
   return React.createElement(
     "radio-group",
     {
       ref,
-      disabled,
       value,
+      id,
+      className,
+      style,
+      slot,
     },
     children
   );
