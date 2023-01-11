@@ -288,7 +288,7 @@ function addAttribute(
     return;
   }
 
-  const newAttribute = {...attribute};
+  const newAttribute = { ...attribute };
   newAttribute.propName = toCamelCase(attribute.name);
 
   if (attribute?.type?.text.includes("boolean")) {
@@ -365,25 +365,13 @@ function getReactComponentTemplate(
       ${has(eventTemplates) ? "/** Event listeners */" : ""}
       ${eventTemplates?.join("") || ""}
 
-      ${
-        has(booleanAttrTemplates)
-          ? "/** Boolean attributes */"
-          : ""
-      }
+      ${has(booleanAttrTemplates) ? "/** Boolean attributes */" : ""}
       ${booleanAttrTemplates?.join("") || ""}
 
-      ${
-        has(attrTemplates)
-          ? "/** Attributes */"
-          : ""
-      }
+      ${has(attrTemplates) ? "/** Attributes */" : ""}
       ${attrTemplates?.join("") || ""}
 
-      ${
-        has(propTemplates)
-          ? "/** Properties */"
-          : ""
-      }
+      ${has(propTemplates) ? "/** Properties */" : ""}
       ${propTemplates?.join("") || ""}
 
       return React.createElement(
@@ -572,7 +560,7 @@ function getPropsInterface(
     `
     /** A mutable ref object whose \`.current\` property is initialized to the passed argument (\`initialValue\`). The returned object will persist for the full lifetime of the component. */
     ref?: any;
-    `
+    `,
   ]?.join("");
 }
 
@@ -599,11 +587,9 @@ function getEventType(
 
   return (
     base +
-    (eventType.includes(":") ||
-    eventType.includes("{") ||
-    eventType.includes("[")
-      ? `<${eventType}>`
-      : `<${componentName}Types.${eventType}>`)
+    (eventType[0] !== eventType[0].toLowerCase()
+      ? `<${componentName}Types.${eventType}>`
+      : `<${eventType}>`)
   );
 }
 
