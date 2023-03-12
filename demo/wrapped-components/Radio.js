@@ -5,7 +5,7 @@ import {
   useProperties,
   useEventListener,
 } from "./react-utils";
-import "../components/radio-group.js";
+import "../components/radio-button.js";
 
 export function Radio({
   children,
@@ -33,7 +33,7 @@ export function Radio({
   useAttribute(ref, "slot", slot);
 
   return React.createElement(
-    "radio-group",
+    "radio-button",
     {
       ref,
       value,

@@ -36,6 +36,11 @@
  * @event {MyType} typed-custom-event - some description for typed-custom-event
  *
  */
-class RadioGroup extends HTMLElement {}
+class RadioGroup extends HTMLElement {
+  /** Checks the validity of the radio group */
+  checkValidity() {
+    return true;
+  }
+}
 
 customElements.define("radio-group", RadioGroup);

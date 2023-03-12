@@ -35,8 +35,8 @@
           "superclass": {
             "name": "HTMLElement"
           },
-          "tagName": "radio-group",
           "summary": "Radios buttons allow users to select a single option from a group. Here is its [documentation](https://my-site.com/documentation).\\n\\nUse it like this:\\n```html\\n<Radio value=\"1\" disabled>Your label</Radio>\\n```",
+          "tagName": "radio-button",
           "customElement": true
         }
       ],
@@ -87,6 +87,11 @@
             }
           ],
           "members": [
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "description": "Checks the validity of the radio group"
+            },
             {
               "type": {
                 "text": "boolean"

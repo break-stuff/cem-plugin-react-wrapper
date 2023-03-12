@@ -1,6 +1,6 @@
 import React from "react";
-import "../components/radio-group.js";
-import type * as RadioTypes from "../components/radio-group";
+import "../components/radio-button.js";
+import type * as RadioTypes from "../components/radio-button";
 
 export interface RadioProps {
   /** Disables the radio button */
