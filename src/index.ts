@@ -194,7 +194,6 @@ function getProperties(
       member.privacy !== "private" &&
       member.privacy !== "protected" &&
       !member.attribute &&
-      member.type &&
       (member.description || member.deprecated) &&
       !booleanAttributes.find((x) => x.propName === member.name) &&
       !attributes.find((x) => x.propName === member.name)
@@ -360,7 +359,7 @@ function getReactComponentTemplate(
     } } from "react";
     import { useAttribute, useBooleanAttribute, useProperties, useEventListener } from './react-utils';
     import '${modulePath}';
-    
+
     export const ${component.name} = forwardRef(({children${
     params ? "," : ""
   } ${params}}, forwardedRef) => {
