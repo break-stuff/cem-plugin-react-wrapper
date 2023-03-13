@@ -449,6 +449,8 @@ function getTypeDefinitionTemplate(
     import ${component.name}Element from '${modulePath.replace(".js", "")}';
 
     export type { ${component.name}Element };
+    export type * from '${modulePath.replace(".js", "")}';
+    
     export interface ${component.name}Props { 
       ${props} 
     }
@@ -669,12 +671,7 @@ function getEventType(
     return base;
   }
 
-  return (
-    base +
-    (eventType[0] !== eventType[0].toLowerCase()
-      ? `<${componentName}Element.${eventType}>`
-      : `<${eventType}>`)
-  );
+  return base + `<${eventType}>`;
 }
 
 function getMethods(component: Declaration) {
