@@ -140,12 +140,10 @@ export function useAttribute(targetElement, attrName, value) {
 
 export function useBooleanAttribute(targetElement, attrName, propName) {
   useEffect(() => {
-    if (propName !== undefined) {
-      if (propName) {
-        targetElement.current?.setAttribute(attrName, '');
-      } else {
-        targetElement.current?.removeAttribute(attrName);
-      }
+    if (!propName || propName === 'false') {
+      targetElement.current?.setAttribute(attrName, '');
+    } else {
+      targetElement.current?.removeAttribute(attrName);
     }
   }, [propName]);
 }
@@ -161,7 +159,7 @@ export function useProperties(targetElement, propName, value) {
 export function useEventListener(targetElement, eventName, eventHandler) {
   useEffect(() => {
     if (eventHandler !== undefined) {
-      targetElement.current.addEventListener(eventName, eventHandler);
+      targetElement?.current?.addEventListener(eventName, eventHandler);
     }
 
     return () => {
@@ -169,9 +167,7 @@ export function useEventListener(targetElement, eventName, eventHandler) {
         eventHandler.cancel();
       }
 
-      if (targetElement?.current?.removeEventListener) {
-        targetElement.current.removeEventListener(eventName, eventHandler);
-      }
+      targetElement?.current?.removeEventListener(eventName, eventHandler);
     };
   }, [eventName, eventHandler, targetElement]);
 }

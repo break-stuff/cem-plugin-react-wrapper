@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import {
   useAttribute,
   useBooleanAttribute,
@@ -7,41 +7,38 @@ import {
 } from "./react-utils";
 import "../components/radio-button.js";
 
-export function Radio({
-  children,
-  disabled,
-  value,
-  id,
-  className,
-  style,
-  slot,
-  onClick,
-}) {
-  const ref = useRef(null);
+export const Radio = forwardRef(
+  (
+    { children, disabled, value, id, className, style, slot, onClick },
+    forwardedRef
+  ) => {
+    const ref = useRef(null);
 
-  /** Event listeners */
-  useEventListener(ref, "click", onClick);
+    /** Event listeners - run once */
+    useEventListener(ref, "click", onClick);
 
-  /** Boolean attributes */
-  useBooleanAttribute(ref, "disabled", disabled);
+    /** Boolean attributes - run whenever an attr has changed */
+    useBooleanAttribute(ref, "disabled", disabled);
 
-  /** Attributes */
-  useAttribute(ref, "value", value);
-  useAttribute(ref, "id", id);
-  useAttribute(ref, "class", className);
-  useAttribute(ref, "style", style);
-  useAttribute(ref, "slot", slot);
+    /** Attributes - run whenever an attr has changed */
+    useAttribute(ref, "value", value);
+    useAttribute(ref, "id", id);
+    useAttribute(ref, "style", style);
+    useAttribute(ref, "slot", slot);
 
-  return React.createElement(
-    "radio-button",
-    {
-      ref,
-      value,
-      id,
-      className,
-      style,
-      slot,
-    },
-    children
-  );
-}
+    useImperativeHandle(forwardedRef, () => ({}));
+
+    return React.createElement(
+      scope.prefix + "radio-button",
+      {
+        ref,
+        value,
+        id,
+        class: className,
+        style,
+        slot,
+      },
+      children
+    );
+  }
+);

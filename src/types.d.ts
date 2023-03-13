@@ -97,6 +97,7 @@ interface Member {
   type: Type;
   default?: string;
   description: string;
+  deprecated?: string;
   attribute: string;
   reflects?: boolean;
   privacy?: string;

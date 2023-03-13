@@ -1,13 +1,12 @@
-import React from "react";
-import "../components/radio-button.js";
-import type * as RadioTypes from "../components/radio-button";
+import RadioElement from "../components/radio-button";
 
+export type { RadioElement };
 export interface RadioProps {
   /** Disables the radio button */
   disabled?: boolean;
 
   /** The value assigned to the radio button. This will reflect in the radio group when clicked. */
-  value?: string;
+  value?: RadioElement["value"];
 
   /** Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS). */
   id?: string;
@@ -25,8 +24,9 @@ export interface RadioProps {
   onClick?: (event: MouseEvent) => void;
 
   /** Used to help React identify which items have changed, are added, or are removed within a list. */
-  key?: string;
+  key?: string | number;
 
+  /** Content between the opening and closing component tags. */
   children?: any;
 
   /** A mutable ref object whose `.current` property is initialized to the passed argument (`initialValue`). The returned object will persist for the full lifetime of the component. */
@@ -39,9 +39,7 @@ declare module "react" {
       DOMAttributes<T>,
       RadioProps {}
 }
-
 /**
- *
  * Radios buttons allow users to select a single option from a group. Here is its [documentation](https://my-site.com/documentation).
  *
  * Use it like this:
@@ -49,19 +47,15 @@ declare module "react" {
  * <Radio value="1" disabled>Your label</Radio>
  * ```
  *
- * **Slots**
+ *
+ * ### Slots
  * - _default_ - add text here to label your radio button
  *
  *
  *
+ *
+ *
+ * [View full documentation](https://harmonyhub.azurewebsites.net/release/2.0.0/#/enablers/components/radio-button)
+ *
  */
-export declare function Radio({
-  children,
-  disabled,
-  value,
-  id,
-  className,
-  style,
-  slot,
-  onClick,
-}: RadioProps): JSX.Element;
+export const Radio: React.ForwardRefExoticComponent<RadioProps>;

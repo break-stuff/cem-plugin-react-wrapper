@@ -1,19 +1,18 @@
-import React from "react";
-import "../components/radio-group.js";
-import type * as RadioGroupTypes from "../components/radio-group";
+import RadioGroupElement from "../components/radio-group";
 
+export type { RadioGroupElement };
 export interface RadioGroupProps {
   /** Disables the element */
   disabled?: boolean;
 
   /** The value of the selected radio */
-  value?: string;
+  value?: RadioGroupElement["value"];
 
   /** This will control the size of radio buttons */
-  size?: 1 | 2 | 3 | 4;
+  size?: RadioGroupElement["size"] | string;
 
   /** This will control the size of radio buttons */
-  helpText?: string;
+  helpText?: RadioGroupElement["helpText"] | string;
 
   /** Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS). */
   id?: string;
@@ -28,10 +27,10 @@ export interface RadioGroupProps {
   slot?: string;
 
   /** this toggles some unseen feature */
-  prop1?: boolean;
+  prop1?: RadioGroupElement["prop1"];
 
   /** this will adjust thr width of the unit */
-  prop2?: number;
+  prop2?: RadioGroupElement["prop2"];
 
   /** some description for custom-event */
   onCustomEvent?: (event: CustomEvent) => void;
@@ -40,14 +39,15 @@ export interface RadioGroupProps {
   onTypedEvent?: (event: CustomEvent) => void;
 
   /** some description for typed-custom-event */
-  onTypedCustomEvent?: (event: CustomEvent<RadioGroupTypes.MyType>) => void;
+  onTypedCustomEvent?: (event: CustomEvent<RadioGroupElement.MyType>) => void;
 
   /** A pointing device button has been pressed and released on an element. */
   onClick?: (event: MouseEvent) => void;
 
   /** Used to help React identify which items have changed, are added, or are removed within a list. */
-  key?: string;
+  key?: string | number;
 
+  /** Content between the opening and closing component tags. */
   children?: any;
 
   /** A mutable ref object whose `.current` property is initialized to the passed argument (`initialValue`). The returned object will persist for the full lifetime of the component. */
@@ -60,9 +60,7 @@ declare module "react" {
       DOMAttributes<T>,
       RadioGroupProps {}
 }
-
 /**
- *
  *
  * Radio groups are used to group multiple radios or radio buttons so they function as a single form control. Here is its [documentation](https://github.com/microsoft/vscode-custom-data/blob/master/samples/webcomponents/src/components/my-component/docs.md).
  *
@@ -76,37 +74,28 @@ declare module "react" {
  * </RadioGroup>
  * ```
  *
- * **Slots**
+ *
+ * ### Slots
  * - _default_ - add radio buttons to the `default` slot to create options to your radio group
  * - **label** - placeholder for the radio group label
  *
- * **Events**
+ * ### Events
  * - **onCustomEvent** - some description for custom-event
  * - **onTypedEvent** - some description for typed-event
  * - **onTypedCustomEvent** - some description for typed-custom-event
  * - **onClick** - A pointing device button has been pressed and released on an element.
  *
- * **CSS Properties**
+ * ### Methods
+ * - **checkValidity()** - Checks the validity of the radio group
+ *
+ * ### CSS Properties
  * - **--text-color** - Controls the color of foo _(default: undefined)_
  * - **--background-color** - Controls the color of bar _(default: red)_
  *
- * **CSS Parts**
+ * ### CSS Parts
  * - **bar** - Styles the color of bar
+ *
+ * [View full documentation](https://harmonyhub.azurewebsites.net/release/2.0.0/#/enablers/components/radio-group)
+ *
  */
-export declare function RadioGroup({
-  children,
-  disabled,
-  value,
-  size,
-  helpText,
-  id,
-  className,
-  style,
-  slot,
-  prop1,
-  prop2,
-  onCustomEvent,
-  onTypedEvent,
-  onTypedCustomEvent,
-  onClick,
-}: RadioGroupProps): JSX.Element;
+export const RadioGroup: React.ForwardRefExoticComponent<RadioGroupProps>;

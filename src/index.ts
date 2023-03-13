@@ -11,6 +11,7 @@ import {
   Member,
   CssProperty,
   CssPart,
+  Parameter,
 } from "./types";
 
 import {
@@ -73,7 +74,7 @@ export default function reactWrapper({
 
 function createOutdir(outdir: string) {
   if (!fs.existsSync(outdir)) {
-    fs.mkdirSync(outdir);
+    fs.mkdirSync(outdir, { recursive: true });
   }
 
   saveReactUtils(outdir);
@@ -81,7 +82,6 @@ function createOutdir(outdir: string) {
 
 function createWrappers(customElementsManifest: CustomElementsManifest) {
   const components = getComponents(customElementsManifest);
-
   components.forEach((component) => {
     const events = [...getEventNames(component), ...baseEvents];
     const { booleanAttributes, attributes } = getAttributes(component);
@@ -195,6 +195,7 @@ function getProperties(
       member.privacy !== "protected" &&
       !member.attribute &&
       member.type &&
+      (member.description || member.deprecated) &&
       !booleanAttributes.find((x) => x.propName === member.name) &&
       !attributes.find((x) => x.propName === member.name)
   );
@@ -288,13 +289,12 @@ function addAttribute(
     return;
   }
 
-  const newAttribute = { ...attribute };
-  newAttribute.propName = toCamelCase(attribute.name);
+  attribute.propName = toCamelCase(attribute.name);
 
   if (attribute?.type?.text.includes("boolean")) {
-    componentAttributes.booleanAttributes.push(newAttribute);
+    componentAttributes.booleanAttributes.push(attribute);
   } else {
-    componentAttributes.attributes.push(newAttribute);
+    componentAttributes.attributes.push(attribute);
   }
 }
 
@@ -319,12 +319,13 @@ function getBooleanAttributeTemplates(booleanAttributes: MappedAttribute[]) {
 }
 
 function getAttributeTemplates(attributes: MappedAttribute[]) {
-  return attributes?.map(
-    (attr) =>
-      `useAttribute(ref, '${attr.originalName || attr?.name}', ${
+  return attributes?.map((attr) => {
+    if (attr.name !== "className") {
+      return `useAttribute(ref, '${attr.originalName || attr?.name}', ${
         attr?.propName
-      });`
-  );
+      });`;
+    }
+  });
 }
 
 function getPropTemplates(properties: Member[]) {
@@ -346,6 +347,7 @@ function getReactComponentTemplate(
   const booleanAttrTemplates = getBooleanAttributeTemplates(booleanAttributes);
   const attrTemplates = getAttributeTemplates(attributes);
   const propTemplates = getPropTemplates(properties);
+  const methods = getMethods(component);
   const useEffect =
     has(eventTemplates) ||
     has(propTemplates) ||
@@ -353,42 +355,76 @@ function getReactComponentTemplate(
     has(booleanAttrTemplates);
 
   return `
-    import React${useEffect ? ", { useRef }" : ""} from "react";
+    import React, { forwardRef, useImperativeHandle ${
+      useEffect ? ", useRef" : ""
+    } } from "react";
     import { useAttribute, useBooleanAttribute, useProperties, useEventListener } from './react-utils';
     import '${modulePath}';
-
-    export function ${component.name}({children${
+    
+    export const ${component.name} = forwardRef(({children${
     params ? "," : ""
-  } ${params}}) {
+  } ${params}}, forwardedRef) => {
       ${useEffect ? `const ref = useRef(null);` : ""}
 
-      ${has(eventTemplates) ? "/** Event listeners */" : ""}
+      ${has(eventTemplates) ? "/** Event listeners - run once */" : ""}
       ${eventTemplates?.join("") || ""}
 
-      ${has(booleanAttrTemplates) ? "/** Boolean attributes */" : ""}
+      ${
+        has(booleanAttrTemplates)
+          ? "/** Boolean attributes - run whenever an attr has changed */"
+          : ""
+      }
       ${booleanAttrTemplates?.join("") || ""}
 
-      ${has(attrTemplates) ? "/** Attributes */" : ""}
+      ${
+        has(attrTemplates)
+          ? "/** Attributes - run whenever an attr has changed */"
+          : ""
+      }
       ${attrTemplates?.join("") || ""}
 
-      ${has(propTemplates) ? "/** Properties */" : ""}
+      ${
+        has(propTemplates)
+          ? "/** Properties - run whenever a property has changed */"
+          : ""
+      }
       ${propTemplates?.join("") || ""}
 
+      ${
+        has(methods)
+          ? "/** Methods - uses `useImperativeHandle` hook to pass ref to component */"
+          : ""
+      }
+      useImperativeHandle(forwardedRef, () => ({
+        ${
+          methods
+            ?.map(
+              (method) =>
+                `${method.name}: ${getMethodParameters(
+                  method.parameters
+                )} => ref.current.${method.name}${getMethodParameters(
+                  method.parameters
+                )}`
+            )
+            .join(",\n") || ""
+        }
+      }));
+
       return React.createElement(
-        "${component.tagName}",
+        scope.prefix + "${component.tagName.replace("he", "")}",
         { 
           ${useEffect ? "ref," : ""} 
           ${attributes
             .map((attr) => {
-              return attr?.name === attr?.propName
+              return (attr.originalName || attr?.name) === attr?.propName
                 ? attr?.name
-                : `"${attr?.name}": ${attr?.propName}`;
+                : `"${attr.originalName || attr?.name}": ${attr?.propName}`;
             })
             .join(", ")}
         },
         children
       );
-    }
+    });
   `;
 }
 
@@ -401,23 +437,21 @@ function getTypeDefinitionTemplate(
   modulePath: string
 ) {
   const params = getParams(booleanAttributes, attributes, properties, events);
+  const props = getPropsInterface(
+    component.name,
+    booleanAttributes,
+    attributes,
+    properties,
+    events
+  );
+  const methods = getMethods(component);
 
   return `
-    import React from "react";
-    import '${modulePath}';
-    import type * as ${component.name}Types from '${modulePath.replace(
-    ".js",
-    ""
-  )}';
-   
-    export interface ${component.name}Props {
-      ${getPropsInterface(
-        component.name,
-        booleanAttributes,
-        attributes,
-        properties,
-        events
-      )} 
+    import ${component.name}Element from '${modulePath.replace(".js", "")}';
+
+    export type { ${component.name}Element };
+    export interface ${component.name}Props { 
+      ${props} 
     }
 
     declare module "react" {
@@ -426,42 +460,53 @@ function getTypeDefinitionTemplate(
       }Props {
       }
     }
-
     /** 
-     * 
-      ${getDescription(component)} 
+     ${getDescription(component)} 
+     *
       ${
         has(component.slots) && config.slotDocs
           ? `*
-  * **Slots** 
+  * ### Slots 
  ${getSlotDocs(component)}`
           : "*"
       }
       ${
         has(component.events) && config.eventDocs
           ? `*
-  * **Events** 
+  * ### Events
  ${getEventDocs(events)}`
+          : "*"
+      }
+      ${
+        has(methods)
+          ? `*
+  * ### Methods
+ ${getMethodDocs(methods)}`
           : "*"
       }
       ${
         has(component.cssProperties) && config.cssPropertiesDocs
           ? `*
-  * **CSS Properties** 
+  * ### CSS Properties 
  ${getCssPropertyDocs(component.cssProperties)}`
           : "*"
       }
       ${
         has(component.cssParts) && config.cssPartsDocs
           ? `*
-  * **CSS Parts** 
+  * ### CSS Parts 
  ${getCssPartsDocs(component.cssParts)}`
           : "*"
       }
+      *
+      * [View full documentation](https://harmonyhub.azurewebsites.net/release/${
+        packageJson.version
+      }/#/enablers/components/${component.tagName.replace("he-", "")})
+      * 
       */
-    export declare function ${component.name}({children${
-    params ? "," : ""
-  } ${params}}: ${component.name}Props): JSX.Element;
+    export const ${component.name}: React.ForwardRefExoticComponent<${
+    component.name
+  }Props>;
   `;
 }
 
@@ -511,6 +556,35 @@ function getCssPartsDocs(parts: CssPart[]) {
     .join("\n");
 }
 
+function getMethodDocs(methods: Member[]) {
+  return methods
+    ?.map(
+      (method) =>
+        `  * - **${method.name}${getTypedMethodParameters(method.parameters)}${
+          method.return ? `: _${method.return.type.text}_` : ""
+        }** - ${method.description}`
+    )
+    .join("\n");
+}
+
+function getTypedMethodParameters(parameters?: Parameter[]) {
+  return parameters
+    ? "(" +
+        parameters
+          .map(
+            (x) => `${x.name + (x?.type?.text ? `: _${x?.type?.text}_` : "")}`
+          )
+          .join(", ") +
+        ")"
+    : "()";
+}
+
+function getMethodParameters(parameters?: Parameter[]) {
+  return parameters
+    ? "(" + parameters.map((x) => `${x.name}`).join(", ") + ")"
+    : "()";
+}
+
 function getPropsInterface(
   componentName: string,
   booleanAttributes: MappedAttribute[],
@@ -528,17 +602,27 @@ function getPropsInterface(
     ...(attributes || []).map(
       (attr) => `
         /** ${attr.description} */
-        ${attr.propName}?: ${getPropType(componentName, attr?.type?.text)};
+        ${attr.propName}?: ${
+        baseProperties.some((base) => base.propName === attr.propName)
+          ? attr.type?.text || "string"
+          : `${componentName}Element['${attr.propName}'] ${
+              !attr.type?.text.includes("string") &&
+              !attr.type?.text.includes("'")
+                ? " | string"
+                : ""
+            }`
+      };
       `
     ),
     ...(properties || []).map(
       (prop) => `
-        /** ${prop.description} */
-        ${toCamelCase(prop.name)}?: ${getPropType(
-        componentName,
-        prop?.type?.text
-      )};
-      `
+      /** ${prop.description} */
+      ${prop.name}?: ${
+        baseProperties.some((base) => base.propName === prop.name)
+          ? prop.type?.text || "string"
+          : `${componentName}Element['${prop.name}']`
+      };
+    `
     ),
     ...events?.map(
       (event) => `
@@ -552,9 +636,10 @@ function getPropsInterface(
     ),
     `
     /** Used to help React identify which items have changed, are added, or are removed within a list. */ 
-    key?: string;
+    key?: string | number;
     `,
     `
+    /** Content between the opening and closing component tags. */
     children?: any;
     `,
     `
@@ -588,17 +673,16 @@ function getEventType(
   return (
     base +
     (eventType[0] !== eventType[0].toLowerCase()
-      ? `<${componentName}Types.${eventType}>`
+      ? `<${componentName}Element.${eventType}>`
       : `<${eventType}>`)
   );
 }
 
-function getPropType(componentName: string, propType?: string) {
-  if (!propType) {
-    return "string";
-  }
-
-  return propType[0] !== propType[0].toLowerCase()
-    ? `${componentName}Types.${propType}`
-    : propType;
+function getMethods(component: Declaration) {
+  return component.members?.filter(
+    (member) =>
+      member.kind === "method" &&
+      member.privacy !== "private" &&
+      member.description?.length
+  );
 }
