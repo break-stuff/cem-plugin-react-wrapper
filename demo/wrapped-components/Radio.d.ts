@@ -1,6 +1,8 @@
 import RadioElement from "../components/radio-button";
 
 export type { RadioElement };
+export type * from "../components/radio-button";
+
 export interface RadioProps {
   /** Disables the radio button */
   disabled?: boolean;
@@ -15,10 +17,13 @@ export interface RadioProps {
   className?: string;
 
   /** Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes. */
-  style?: object;
+  style?: string | object;
 
   /** Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the `<slot>` element whose [name](https://developer.mozilla.org/docs/Web/HTML/Element/slot#attr-name) attribute's value matches that slot attribute's value. */
   slot?: string;
+
+  /** Prevents content from being rendered by the browser. */
+  hidden?: boolean;
 
   /** A pointing device button has been pressed and released on an element. */
   onClick?: (event: MouseEvent) => void;

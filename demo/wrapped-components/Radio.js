@@ -9,7 +9,7 @@ import "../components/radio-button.js";
 
 export const Radio = forwardRef(
   (
-    { children, disabled, value, id, className, style, slot, onClick },
+    { children, disabled, value, id, className, style, slot, hidden, onClick },
     forwardedRef
   ) => {
     const ref = useRef(null);
@@ -25,6 +25,7 @@ export const Radio = forwardRef(
     useAttribute(ref, "id", id);
     useAttribute(ref, "style", style);
     useAttribute(ref, "slot", slot);
+    useAttribute(ref, "hidden", hidden);
 
     useImperativeHandle(forwardedRef, () => ({}));
 
@@ -37,6 +38,7 @@ export const Radio = forwardRef(
         class: className,
         style,
         slot,
+        hidden,
       },
       children
     );

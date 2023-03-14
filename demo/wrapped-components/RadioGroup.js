@@ -19,6 +19,7 @@ export const RadioGroup = forwardRef(
       className,
       style,
       slot,
+      hidden,
       prop1,
       prop2,
       onCustomEvent,
@@ -46,6 +47,7 @@ export const RadioGroup = forwardRef(
     useAttribute(ref, "id", id);
     useAttribute(ref, "style", style);
     useAttribute(ref, "slot", slot);
+    useAttribute(ref, "hidden", hidden);
 
     /** Properties - run whenever a property has changed */
     useProperties(ref, "prop1", prop1);
@@ -67,6 +69,7 @@ export const RadioGroup = forwardRef(
         class: className,
         style,
         slot,
+        hidden,
       },
       children
     );

@@ -1,6 +1,8 @@
 import RadioGroupElement from "../components/radio-group";
 
 export type { RadioGroupElement };
+export type * from "../components/radio-group";
+
 export interface RadioGroupProps {
   /** Disables the element */
   disabled?: boolean;
@@ -21,10 +23,13 @@ export interface RadioGroupProps {
   className?: string;
 
   /** Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes. */
-  style?: object;
+  style?: string | object;
 
   /** Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the `<slot>` element whose [name](https://developer.mozilla.org/docs/Web/HTML/Element/slot#attr-name) attribute's value matches that slot attribute's value. */
   slot?: string;
+
+  /** Prevents content from being rendered by the browser. */
+  hidden?: boolean;
 
   /** this toggles some unseen feature */
   prop1?: RadioGroupElement["prop1"];
@@ -39,7 +44,7 @@ export interface RadioGroupProps {
   onTypedEvent?: (event: CustomEvent) => void;
 
   /** some description for typed-custom-event */
-  onTypedCustomEvent?: (event: CustomEvent<RadioGroupElement.MyType>) => void;
+  onTypedCustomEvent?: (event: CustomEvent<MyType>) => void;
 
   /** A pointing device button has been pressed and released on an element. */
   onClick?: (event: MouseEvent) => void;
