@@ -100,7 +100,5 @@ declare module "react" {
  * ### CSS Parts
  * - **bar** - Styles the color of bar
  *
- * [View full documentation](https://harmonyhub.azurewebsites.net/release/2.0.0/#/enablers/components/radio-group)
- *
  */
 export const RadioGroup: React.ForwardRefExoticComponent<RadioGroupProps>;

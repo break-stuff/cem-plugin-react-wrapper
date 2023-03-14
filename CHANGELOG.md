@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.0
+
+- Add support for component methods
+- Ensure type definitions properly export component types
+- Simplify event typing
+- Add `hidden` as global attribute
+
+
 ## 2.0.0
 
 - Generate smaller package size

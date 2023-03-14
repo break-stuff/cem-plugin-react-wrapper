@@ -500,10 +500,6 @@ function getTypeDefinitionTemplate(
           : "*"
       }
       *
-      * [View full documentation](https://harmonyhub.azurewebsites.net/release/${
-        packageJson.version
-      }/#/enablers/components/${component.tagName.replace("he-", "")})
-      * 
       */
     export const ${component.name}: React.ForwardRefExoticComponent<${
     component.name

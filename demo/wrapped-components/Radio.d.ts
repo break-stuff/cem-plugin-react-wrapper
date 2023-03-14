@@ -60,7 +60,5 @@ declare module "react" {
  *
  *
  *
- * [View full documentation](https://harmonyhub.azurewebsites.net/release/2.0.0/#/enablers/components/radio-button)
- *
  */
 export const Radio: React.ForwardRefExoticComponent<RadioProps>;
