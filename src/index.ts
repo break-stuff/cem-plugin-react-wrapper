@@ -462,7 +462,7 @@ function getTypeDefinitionTemplate(
       }
     }
     /** 
-     ${getDescription(component)} 
+     ${getComponentDescription(component)} 
      *
       ${
         has(component.slots) && config.slotDocs
@@ -511,7 +511,7 @@ function getTypeDefinitionTemplate(
   `;
 }
 
-function getDescription(component: Declaration) {
+function getComponentDescription(component: Declaration) {
   const description = config.descriptionSrc
     ? component[config.descriptionSrc]
     : component.summary || component.description;
@@ -629,7 +629,6 @@ function getPropsInterface(
       (event) => `
         /** ${event.description} */
         ${event.reactName}?: (event: ${getEventType(
-        componentName,
         event.type,
         event.custom
       )}) => void;
@@ -657,7 +656,6 @@ function getManifestContentTemplate(components: Declaration[]) {
 }
 
 function getEventType(
-  componentName: string,
   eventType?: string,
   eventCustom?: boolean
 ) {
