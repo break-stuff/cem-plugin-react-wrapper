@@ -8,9 +8,7 @@ Make your web components React compatible with as little as one line of code!
 - Configurable
 - Very easy to set up and use
 
-
 ![an animated image of the autocomplere functionality in vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/demo.gif?raw=true)
-
 
 ---
 
@@ -20,7 +18,7 @@ This tool leverages the [Custom Element Manifest Analyzer](https://custom-elemen
 
 ### Pre-installation
 
-Ensure the following steps have been taken in your component library prior to using this plugin: 
+Ensure the following steps have been taken in your component library prior to using this plugin:
 
 - Install and set up the [Custom Elements Manifest Analyzer](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/)
 - Create a [config file](https://custom-elements-manifest.open-wc.org/analyzer/config/#config-file)
@@ -53,11 +51,11 @@ Once you run the analyzer, you should see a new directory (the default directory
 You should now be able to start using your "react" components or deploy them with your component library for others to enjoy.
 
 ```js
-import { MyElement, MyOtherElement } from './react';
+import { MyElement, MyOtherElement } from "./react";
 
-// or 
+// or
 
-import { MyElement, MyOtherElement } from 'my-component-library/react';
+import { MyElement, MyOtherElement } from "my-component-library/react";
 ```
 
 ## Configuration
@@ -74,6 +72,7 @@ The configuration has the following optional parameters:
   descriptionSrc?: string;
   slotDocs?: boolean;
   eventDocs?: boolean;
+  methodDocs?: boolean;
 }
 ```
 
@@ -110,6 +109,9 @@ export default {
 
       /** Displays the events section of the element description */
       eventDocs: true
+
+      /** Displays the methods section of the element description */
+      methodDocs: true
     }),
   ],
 };
@@ -129,7 +131,7 @@ React components operate as JavaScript functions and because of that, there are 
 ```
 
 ```jsx
-<MyElement _for={'Some Value'} />
+<MyElement _for={"Some Value"} />
 ```
 
 ### Exclude
@@ -138,7 +140,7 @@ Many component libraries contain internal components and base classes used to he
 
 ```js
 {
-  exclude: ['MyInternalElement', 'MyOtherInternalElement']
+  exclude: ["MyInternalElement", "MyBaseClass"];
 }
 ```
 
@@ -148,7 +150,7 @@ This setting is used to determine where to pull the pull the logic for the custo
 
 This configuration accepts a `function` with the component's class name and tag name as parameters. This should provide greater flexibility in identifying file locations.
 
-***Note:*** _These paths are relative to the React wrapper output directory._
+**_Note:_** _These paths are relative to the React wrapper output directory._
 
 ```js
 {
@@ -174,22 +176,22 @@ Advanced logic can also be abstracted.
 
 ### Output Directory
 
-The `outdir` configuration identifies where the wrappers will be added. The default directory is called `react`. 
+The `outdir` configuration identifies where the wrappers will be added. The default directory is called `react`.
 
 In addition to the wrappers a manifest file (`index.js`) to provide a single point of entry to access the components.
 
 ```js
-import { MyElement, MyOtherElement } from './react';
+import { MyElement, MyOtherElement } from "./react";
 ```
 
 Components can also be accessed directly from each component file.
 
 ```js
-import { MyElement } from './react/MyElement.js';
-import { MyOtherElement } from './react/MyOtherElement.js';
+import { MyElement } from "./react/MyElement.js";
+import { MyOtherElement } from "./react/MyOtherElement.js";
 ```
 
-### TypeScript
+### TypeScript Types
 
 Setting the `typescript` property to `true` will generate type definition files (`.d.ts`) files for each of the components. The property is `true` by default.
 
@@ -200,7 +202,6 @@ Using the `descriptionSrc` configuration, you can determine the source of the te
 If no value is provided, the plugin will use the `summary` property and then fall back to the `description` property if a summary is not available.
 
 ![description section of autocomplete popup from vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/description.png?raw=true)
-
 
 **Note:** _Descriptions support multiple lines by breaking the comment up into multiple lines whereas summaries do not and will need to be manually added using `\n`._
 
@@ -220,7 +221,7 @@ If no value is provided, the plugin will use the `summary` property and then fal
  *   <Radio value="3">Option 3</Radio>
  * </RadioGroup>
  * ```
- * 
+ *
  */
 ```
 
@@ -230,7 +231,7 @@ If no value is provided, the plugin will use the `summary` property and then fal
 /**
  *
  * @summary Radios buttons allow users to select a single option from a group. Here is its [documentation](https://my-site.com/documentation).\n\nUse it like this:\n```html\n<Radio value="1" disabled>Your label</Radio>\n```
- * 
+ *
  * /
 ```
 
@@ -239,13 +240,13 @@ If no value is provided, the plugin will use the `summary` property and then fal
 All attributes and public property names (with the exception of those that were mapped using the `attributeMapping` config) are converted to camel-case properties on the React component.
 
 ```jsx
-<MyCheckbox myLabel={'My Checkbox'} />
+<MyCheckbox myLabel={"My Checkbox"} />
 ```
 
 Additionally, complex objects can also be passed as properties as well.
 
 ```jsx
-<MyTodoList items={['Wash car', 'Pay bills', 'Deploy code']} />
+<MyTodoList items={["Wash car", "Pay bills", "Deploy code"]} />
 ```
 
 ## Slots
@@ -270,7 +271,7 @@ Slot information will display with the element description during autocompletion
 Event names are converted to camel-case names prefixed with `on`. For example, an event named `my-change` will be converted to `onMyChange`.
 
 ```jsx
-<MySelect onMyChange={e => handleMyChange(e)} />
+<MySelect onMyChange={handleMyChange} />
 ```
 
 Event information will display with the element description during autocompletion or when hovered over. This section can be hidden by setting `slotEvents` to `false` in the config.
@@ -282,3 +283,64 @@ Event information will display with the element description during autocompletio
 Component-specific [CSS Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) and [CSS Parts](https://developer.mozilla.org/en-US/docs/Web/CSS/::part) are included in the component documentation. These can be hidden using the `cssPropertiesDocs` and `cssPartsDocs` configuration options respectively.
 
 ![css properties and css parts sections of autocomplete popup from vs code](https://github.com/break-stuff/cem-plugin-react-wrapper/blob/master/demo/images/css.png?raw=true)
+
+## TypeScript Support
+
+There are a few important things to keep in mind when using types in your new React-wrapped components.
+
+### Component Type
+
+Your component wrappers will likely have the same name as the class used to declare the custom element. In order to prevent name collisions, references to your component will be suffixed with `Element` - (example - `MySwitch` -> `MySwitchElement`). This is useful for passing a `ref` to your component.
+
+```tsx
+import React, { useRef } from "react";
+import { MySwitch, MySwitchElement } from "../components/react";
+
+function MyFeature() {
+  const switchRef = useRef<MySwitchElement>(null);
+
+  const handleClick = () => {
+    switchRef.current?.toggle();
+  };
+
+  return (
+    <>
+      <button onClick={handleClick}>Toggle</button>
+      <MySwitch ref={switchRef} />
+    </>
+  );
+}
+```
+
+This is also important when referencing an element from the event target.
+
+```tsx
+import { MySwitch, MySwitchElement } from "../components/react";
+
+function MyFeature() {
+  const handleChange = (e: CustomEvent) => {
+    (e.target as MySwitchElement).toggle();
+  };
+
+  return <MySwitch onChange={handleChange} />;
+}
+```
+
+### Prop Types
+
+Each react component will provide types for the component properties using the component name suffixed with `Props` (example - `MyButton` -> `MyButtonProps`). This will automatically be applied to the component to provide editor autocomplete and type-safety, but there may be times where you need access to the types of those properties. The example below shows how you can import the prop types to provide relevant types to other values in your components.
+
+```ts
+
+```
+
+```tsx
+import { MyButton, MyButtonProps } from "../components/react";
+
+function MyFeature() {
+  // Now TypeScript will only allow valid variants to be set using `setVariant`
+  const [variant, setVariant] = useState<MyButtonProps['variant']>('primary');
+
+  return <MyButton variant={variant}>Button</MyButton>;
+}
+```
