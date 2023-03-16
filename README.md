@@ -290,13 +290,13 @@ There are a few important things to keep in mind when using types in your new Re
 
 ### Component Type
 
-Your component wrappers will likely have the same name as the class used to declare the custom element. In order to prevent name collisions, references to your component will be suffixed with `Element` - (example - `MySwitch` -> `MySwitchElement`). This is useful for passing a `ref` to your component.
+Your component wrappers will likely have the same name as the class used to declare the custom element. In order to prevent name collisions, references to your component will be suffixed with `Element` - (example - `MySwitch` -> `MySwitchElement`). This is useful if you want to provide types and autocomplete when using `refs` with your components.
 
 ```tsx
 import React, { useRef } from "react";
 import { MySwitch, MySwitchElement } from "../components/react";
 
-function MyFeature() {
+export default () => {
   const switchRef = useRef<MySwitchElement>(null);
 
   const handleClick = () => {
@@ -315,32 +315,31 @@ function MyFeature() {
 This is also important when referencing an element from the event target.
 
 ```tsx
-import { MySwitch, MySwitchElement } from "../components/react";
+import { MyInput, MyInputElement, MyInputChangeEvent } from "../components/react";
 
-function MyFeature() {
-  const handleChange = (e: CustomEvent) => {
-    (e.target as MySwitchElement).toggle();
+export default () => {
+  // If your events have a `details` payload, be sure to provide types and export them. They will be included in the wrapper types.
+  const handleChange = (e: CustomEvent<MyInputChangeEvent>) => {
+    const value = (e.target as MyInputElement).value;
+    ...
   };
 
-  return <MySwitch onChange={handleChange} />;
+  return <MyInput onChange={handleChange} />;
 }
 ```
 
 ### Prop Types
 
-Each react component will provide types for the component properties using the component name suffixed with `Props` (example - `MyButton` -> `MyButtonProps`). This will automatically be applied to the component to provide editor autocomplete and type-safety, but there may be times where you need access to the types of those properties. The example below shows how you can import the prop types to provide relevant types to other values in your components.
+Each React component will provide types for the component properties using the component name suffixed with `Props` (example - `MyButton` -> `MyButtonProps`). This will automatically be applied to the component to provide editor autocomplete and type-safety, but there may be times where you need access to the types of those properties. The example below shows how you can import the prop types to provide relevant types to your state management and other values in your components.
 
-```ts
-
-```
 
 ```tsx
 import { MyButton, MyButtonProps } from "../components/react";
 
-function MyFeature() {
-  // Now TypeScript will only allow valid variants to be set using `setVariant`
-  const [variant, setVariant] = useState<MyButtonProps['variant']>('primary');
+export default () => {
+  // Now TypeScript will only allow valid variants to be set using `setButtonVariant` and the `variant` prop will identify `buttonVariant` as a valid variable type.
+  const [buttonVariant, setButtonVariant] = useState<MyButtonProps['variant']>('primary');
 
-  return <MyButton variant={variant}>Button</MyButton>;
+  return <MyButton variant={buttonVariant}>Button</MyButton>;
 }
 ```
