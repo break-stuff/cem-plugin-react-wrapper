@@ -13,6 +13,7 @@ export interface Config {
   descriptionSrc?: 'description' | 'summary';
   slotDocs?: boolean;
   eventDocs?: boolean;
+  methodDocs?: boolean;
   cssPropertiesDocs?: boolean;
   cssPartsDocs?: boolean;
 }

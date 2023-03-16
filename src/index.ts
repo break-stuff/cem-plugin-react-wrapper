@@ -37,6 +37,7 @@ export default function reactWrapper({
   descriptionSrc,
   slotDocs = true,
   eventDocs = true,
+  methodDocs = true,
   cssPropertiesDocs = true,
   cssPartsDocs = true,
 }: Config = {}) {
@@ -54,6 +55,7 @@ export default function reactWrapper({
         descriptionSrc,
         slotDocs,
         eventDocs,
+        methodDocs,
         cssPartsDocs,
         cssPropertiesDocs,
       };
@@ -479,7 +481,7 @@ function getTypeDefinitionTemplate(
           : "*"
       }
       ${
-        has(methods)
+        has(methods) && config.methodDocs
           ? `*
   * ### Methods
  ${getMethodDocs(methods)}`
