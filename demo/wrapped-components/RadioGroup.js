@@ -59,7 +59,7 @@ export const RadioGroup = forwardRef(
     }));
 
     return React.createElement(
-      scope.prefix + "radio-group",
+      "radio-group",
       {
         ref,
         value,

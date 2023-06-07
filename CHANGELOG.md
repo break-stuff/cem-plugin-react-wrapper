@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2
+
+- Fix bug in tag name
+
 ## 2.1.1
 
 - Update import paths to support projects that have `"type": "module"`

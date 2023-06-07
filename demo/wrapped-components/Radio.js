@@ -30,7 +30,7 @@ export const Radio = forwardRef(
     useImperativeHandle(forwardedRef, () => ({}));
 
     return React.createElement(
-      scope.prefix + "radio-button",
+      "radio-button",
       {
         ref,
         value,

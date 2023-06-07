@@ -412,7 +412,7 @@ function getReactComponentTemplate(
       }));
 
       return React.createElement(
-        scope.prefix + "${component.tagName.replace("he", "")}",
+        "${component.tagName}",
         { 
           ${useEffect ? "ref," : ""} 
           ${attributes
