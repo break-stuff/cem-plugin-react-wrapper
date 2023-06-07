@@ -1,7 +1,7 @@
-import RadioGroupElement from "../components/radio-group";
+import RadioGroupElement from "../components/radio-group.js";
 
 export type { RadioGroupElement };
-export type * from "../components/radio-group";
+export type * from "../components/radio-group.js";
 
 export interface RadioGroupProps {
   /** Disables the element */

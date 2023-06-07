@@ -359,7 +359,7 @@ function getReactComponentTemplate(
     import React, { forwardRef, useImperativeHandle ${
       useEffect ? ", useRef" : ""
     } } from "react";
-    import { useAttribute, useBooleanAttribute, useProperties, useEventListener } from './react-utils';
+    import { useAttribute, useBooleanAttribute, useProperties, useEventListener } from './react-utils.js';
     import '${modulePath}';
 
     export const ${component.name} = forwardRef(({children${
@@ -448,10 +448,10 @@ function getTypeDefinitionTemplate(
   const methods = getMethods(component);
 
   return `
-    import ${component.name}Element from '${modulePath.replace(".js", "")}';
+    import ${component.name}Element from '${modulePath}';
 
     export type { ${component.name}Element };
-    export type * from '${modulePath.replace(".js", "")}';
+    export type * from '${modulePath}';
     
     export interface ${component.name}Props { 
       ${props} 

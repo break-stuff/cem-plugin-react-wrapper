@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+- Update import paths to support projects that have `"type": "module"`
+
 ## 2.1.0
 
 - Add support for component methods

@@ -4,7 +4,7 @@ import {
   useBooleanAttribute,
   useProperties,
   useEventListener,
-} from "./react-utils";
+} from "./react-utils.js";
 import "../components/radio-group.js";
 
 export const RadioGroup = forwardRef(

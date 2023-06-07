@@ -1,7 +1,7 @@
-import RadioElement from "../components/radio-button";
+import RadioElement from "../components/radio-button.js";
 
 export type { RadioElement };
-export type * from "../components/radio-button";
+export type * from "../components/radio-button.js";
 
 export interface RadioProps {
   /** Disables the radio button */
