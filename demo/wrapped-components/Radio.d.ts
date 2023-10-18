@@ -1,4 +1,4 @@
-import RadioElement from "../components/radio-button.js";
+import { Radio as RadioElement } from "../components/radio-button.js";
 
 export type { RadioElement };
 export type * from "../components/radio-button.js";

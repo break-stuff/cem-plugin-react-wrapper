@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.3
+
+- Remove unused imports
+- Fix component import to use Component name instead of assuming a default export
+
 ## 2.1.2
 
 - Fix bug in tag name

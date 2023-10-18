@@ -7,7 +7,7 @@ export default () => {
   return (
     <div>
 
-      <RadioGroup value="3" size={1} ref={ref}>
+      <RadioGroup disabled value="3" size={} ref={ref}>
         <Radio value="1" onClick={
           () => {}
         }>Option 1</Radio>

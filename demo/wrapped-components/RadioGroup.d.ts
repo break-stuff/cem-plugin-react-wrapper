@@ -1,4 +1,4 @@
-import RadioGroupElement from "../components/radio-group.js";
+import { RadioGroup as RadioGroupElement } from "../components/radio-group.js";
 
 export type { RadioGroupElement };
 export type * from "../components/radio-group.js";

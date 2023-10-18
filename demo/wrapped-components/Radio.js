@@ -2,7 +2,6 @@ import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import {
   useAttribute,
   useBooleanAttribute,
-  useProperties,
   useEventListener,
 } from "./react-utils.js";
 import "../components/radio-button.js";

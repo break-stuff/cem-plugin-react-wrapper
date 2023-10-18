@@ -359,7 +359,12 @@ function getReactComponentTemplate(
     import React, { forwardRef, useImperativeHandle ${
       useEffect ? ", useRef" : ""
     } } from "react";
-    import { useAttribute, useBooleanAttribute, useProperties, useEventListener } from './react-utils.js';
+    import { 
+      ${has(attrTemplates) ? 'useAttribute,' : ''} 
+      ${has(booleanAttrTemplates) ? 'useBooleanAttribute,' : ''} 
+      ${has(eventTemplates) ? 'useEventListener,' : ''} 
+      ${has(propTemplates) ? 'useProperties': ''}
+    } from './react-utils.js';
     import '${modulePath}';
 
     export const ${component.name} = forwardRef(({children${
@@ -448,7 +453,7 @@ function getTypeDefinitionTemplate(
   const methods = getMethods(component);
 
   return `
-    import ${component.name}Element from '${modulePath}';
+    import { ${component.name} as ${component.name}Element } from '${modulePath}';
 
     export type { ${component.name}Element };
     export type * from '${modulePath}';
