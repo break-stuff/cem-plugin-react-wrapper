@@ -1,5 +1,7 @@
 # Web Component React Wrapper
 
+> This project has been moved to the [Custom Element React Wrappers](https://www.npmjs.com/package/custom-element-react-wrappers) project.
+
 Make your web components React compatible with as little as one line of code!
 
 - No manual event mapping
